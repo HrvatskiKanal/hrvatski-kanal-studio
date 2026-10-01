@@ -18,7 +18,7 @@ Novi lokalni alat pripada ovdje, u `tools/`. Alati kojima stvarno treba posluži
 
 ## HK Agent
 
-Studio uključuje mali **HK Agent** u donjem desnom kutu. To je besplatni browser-lokalni pomoćnik: prepoznaje pitanja o alatima i vodi korisnika izravno na odgovarajući alat. Ne koristi AI API, ne šalje razgovor na server i namjerno nije povezan s video downloaderom. Ako se kasnije doda pravi lokalni model, mora ostati opcionalan, vidljivo označen i bez automatskog troška.
+Studio uključuje mali **HK Agent** u donjem desnom kutu. To je besplatni browser-lokalni pomoćnik i tražilica: prepoznaje pitanja o alatima, rubrikama, Katoličkom kalendaru, Povijesti Hrvata, Domovinskom ratu, Vijestima, Politici, Medijima, Geopolitici, Vremenu, Ekonomiji, Kontaktima i podršci te vodi korisnika na odgovarajuću stranicu. Nema prijave, praćenja ni limita pitanja. Ne koristi AI API, ne šalje razgovor na server i namjerno nije povezan s video downloaderom. Ako se kasnije doda pravi lokalni model, mora ostati opcionalan, vidljivo označen i bez automatskog troška.
 
 ## Alati (14)
 

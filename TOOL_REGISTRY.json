@@ -7,8 +7,8 @@
     "name": "HK Agent",
     "entrypoint": "hk-agent.js",
     "kind": "browser-local-tool-guide",
-    "connectedTools": "All Studio browser tools except the video downloader",
-    "networkBoundary": "No AI API, no server chat, no conversation upload; future local-model additions must remain optional and cost-transparent."
+    "connectedTools": "All Studio browser tools except the video downloader; site search includes rubrics, Catholic calendar, Croatian history, Homeland War, news, politics, media, geopolitics, weather, economy, contact, and support",
+    "networkBoundary": "No AI API, no server chat, no conversation upload, no login, no tracking, and no question limit; future local-model additions must remain optional and cost-transparent."
   },
   "repositories": [
     {
