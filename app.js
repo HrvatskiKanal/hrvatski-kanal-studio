@@ -1,5 +1,5 @@
 const tools = [
-  { name: 'CupoBot', slug: 'cupobot', description: 'hrvatski istraživački alat', icon: '🧠', href: 'tools/cupobot.html' },
+  { name: 'CupoBot', slug: 'cupobot', description: 'hrvatski istraživački alat', icon: '🧠', href: 'tools/cupobot.html', docsHref: 'https://github.com/Hrvatski-Kanal/cupobot-hub' },
   { name: 'Downloader', slug: 'downloader', description: 'URL, tekst i Base64 u datoteku', icon: '⬇️', href: 'tools/downloader.html' },
   { name: 'Vodeni žig', slug: 'vodeni-zig', description: 'tekstualni žig na slici', icon: '💧', href: 'tools/vodeni-zig.html' },
   { name: 'Paleta boja', slug: 'paleta-boja', description: 'dominantne boje iz slike', icon: '🎨', href: 'tools/paleta-boja.html' },
@@ -20,14 +20,16 @@ const grid = document.getElementById('toolGrid');
 
 if (grid) {
   tools.forEach((tool, index) => {
-    const card = document.createElement('a');
-    card.href = tool.href;
+    const card = document.createElement('article');
     card.className = 'tool-card';
+    const nameHref = tool.docsHref || tool.href;
+    const external = tool.docsHref ? ' target="_blank" rel="noopener noreferrer"' : '';
     card.innerHTML = `
       <div class="tool-number">${index + 1}</div>
       <div class="tool-icon">${tool.icon}</div>
-      <div class="tool-name">${tool.name}</div>
+      <a class="tool-name" href="${nameHref}"${external}>${tool.name}</a>
       <div class="tool-desc">${tool.description}</div>
+      <a class="tool-open" href="${tool.href}">Otvori alat</a>
     `;
     grid.appendChild(card);
   });
