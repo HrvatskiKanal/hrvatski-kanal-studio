@@ -16,8 +16,8 @@
   ];
   const sitePages = [
     { name: 'Početna i Alati', terms: ['počet', 'naslov', 'alat', 'studio'], href: 'index.html#tools', answer: 'Na početnoj stranici nalazi se cijeli Hrvatski Kanal Studio i svi lokalni alati.' },
-    { name: 'Vrijeme', terms: ['vrijem', 'prognoz', 'temperatur'], href: 'https://hrvatskikanal.com/vrijeme', answer: 'Rubrika Vrijeme prikazuje javno dostupne podatke; vrijednosti mogu biti nedostupne ili zastarjele.' },
-    { name: 'Ekonomija', terms: ['ekonom', 'burz', 'tržišt', 'dion'], href: 'https://hrvatskikanal.com/ekonomija', answer: 'Rubrika Ekonomija prikazuje tržišne podatke i povezane vijesti uz napomene o izvoru.' },
+    { name: 'Vrijeme', terms: ['vrijem', 'prognoz', 'temperatur', 'weather', 'forecast'], href: 'https://hrvatskikanal.com/vrijeme', answer: 'Rubrika Vrijeme prikazuje javno dostupne podatke; vrijednosti mogu biti nedostupne ili zastarjele.' },
+    { name: 'Ekonomija', terms: ['ekonom', 'burz', 'tržišt', 'dion', 'economy', 'stock', 'market'], href: 'https://hrvatskikanal.com/ekonomija', answer: 'Rubrika Ekonomija prikazuje tržišne podatke i povezane vijesti uz napomene o izvoru.' },
     { name: 'Vijesti i članci', terms: ['vijest', 'članak', 'aktual'], href: 'https://hrvatskikanal.com/clanci', answer: 'Vijesti i članci dostupni su u rubrici Vijesti.' },
     { name: 'Politika', terms: ['politik'], href: 'https://hrvatskikanal.com/clanci?k=politika', answer: 'Članke iz rubrike Politika možeš otvoriti na stranici članaka.' },
     { name: 'Mediji', terms: ['medij'], href: 'https://hrvatskikanal.com/clanci?k=mediji', answer: 'Članke iz rubrike Mediji možeš otvoriti na stranici članaka.' },
