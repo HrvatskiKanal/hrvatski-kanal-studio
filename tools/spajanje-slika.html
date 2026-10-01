@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slike u PDF</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="tool-page">
+    <div class="tool-topbar">
+      <a href="../index.html">← Natrag</a>
+      <span>Slike u PDF</span>
+    </div>
+    <div class="tool-body">
+      <h1>Slike u PDF</h1>
+      <p>Dodaj više slika i pretvori ih u PDF.</p>
+
+      <div class="tool-box">
+        <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
+          <input id="fileInput" type="file" accept="image/*" multiple />
+          Učitaj slike
+        </label>
+        <div class="row">
+          <button id="createPdfBtn" class="btn btn-primary" type="button">Napravi PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const createPdfBtn = document.getElementById('createPdfBtn');
+    let images = [];
+
+    fileInput.addEventListener('change', (event) => {
+      images = Array.from(event.target.files || []);
+    });
+
+    createPdfBtn.addEventListener('click', () => {
+      if (!images.length) return;
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      images.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const ratio = Math.min(pageWidth / img.width, pageHeight / img.height);
+            const w = img.width * ratio;
+            const h = img.height * ratio;
+            const x = (pageWidth - w) / 2;
+            const y = (pageHeight - h) / 2;
+            pdf.addImage(e.target.result, 'PNG', x, y, w, h);
+            if (index < images.length - 1) pdf.addPage();
+            if (index === images.length - 1) pdf.save('slike.pdf');
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+</body>
+</html>

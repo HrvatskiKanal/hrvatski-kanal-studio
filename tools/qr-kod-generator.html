@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR kod generator</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="tool-page">
+    <div class="tool-topbar">
+      <a href="../index.html">← Natrag</a>
+      <span>QR kod generator</span>
+    </div>
+    <div class="tool-body">
+      <h1>QR kod generator</h1>
+      <p>Generiraj QR kod za URL, e-mail ili tekst.</p>
+
+      <div class="tool-box">
+        <textarea id="qrText" placeholder="Upiši tekst ili URL..."></textarea>
+        <div class="row">
+          <button id="generateBtn" class="btn btn-primary" type="button">Generiraj QR</button>
+          <button id="downloadBtn" class="btn btn-success" type="button">Preuzmi</button>
+        </div>
+        <div class="row" style="justify-content:center;">
+          <canvas id="qrCanvas" width="220" height="220" style="background:white;border-radius:16px;padding:12px;border:1px solid rgba(148,163,184,0.2);"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    const qrText = document.getElementById('qrText');
+    const canvas = document.getElementById('qrCanvas');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    generateBtn.addEventListener('click', () => {
+      const value = qrText.value.trim();
+      if (!value) return;
+      QRCode.toCanvas(canvas, value, { width: 220, margin: 2 }, (error) => {
+        if (error) console.error(error);
+      });
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'qr-kod.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>
