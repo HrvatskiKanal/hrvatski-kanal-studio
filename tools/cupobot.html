@@ -23,110 +23,26 @@
 
       <div class="tool-box">
         <label class="label" for="message">Pitanje ili zadatak</label>
-        <textarea id="message" placeholder="Npr. ukloni pozadinu s ove slike ili istraži temu..."></textarea>
+        <textarea id="message" placeholder="Npr. konvertiraj sliku u WebP, napravi QR kod ili optimiziraj ovu sliku..."></textarea>
 
         <label class="agent-file label" for="fileInput">
-          Slika za CupoBota (opcionalno)
-          <input id="fileInput" type="file" accept="image/*" />
+          Datoteka za CupoBota (opcionalno)
+          <input id="fileInput" type="file" accept="image/*" multiple />
         </label>
-        <img id="preview" class="agent-preview" alt="Pregled slike za CupoBota" />
+        <img id="preview" class="agent-preview" alt="Pregled datoteke za CupoBota" />
 
         <div class="row">
           <button id="askBtn" class="btn btn-primary" type="button">Neka CupoBot odabere alat</button>
         </div>
-        <p id="status" class="label" role="status">Spremno. Slika ostaje u ovom pregledniku.</p>
+        <p id="status" class="label" role="status">Spremno. Slike ostaju u ovom pregledniku.</p>
         <pre id="answer" class="panel agent-result">CupoBot će prepoznati zadatak i pozvati odgovarajući naš alat.</pre>
-        <a id="downloadBtn" class="btn btn-success" download="cupo-bez-pozadine.png" style="display:none; width:max-content; margin-top:12px;">Preuzmi rezultat</a>
+        <a id="downloadBtn" class="btn btn-success" download="cupo-rezultat.png" style="display:none; width:max-content; margin-top:12px;">Preuzmi rezultat</a>
       </div>
     </div>
   </div>
 
-  <script>
-    const message = document.getElementById('message');
-    const fileInput = document.getElementById('fileInput');
-    const preview = document.getElementById('preview');
-    const askBtn = document.getElementById('askBtn');
-    const status = document.getElementById('status');
-    const answer = document.getElementById('answer');
-    const downloadBtn = document.getElementById('downloadBtn');
-    let selectedFile = null;
-    let selectedUrl = '';
-
-    fileInput.addEventListener('change', () => {
-      selectedFile = fileInput.files?.[0] || null;
-      if (selectedUrl) URL.revokeObjectURL(selectedUrl);
-      selectedUrl = selectedFile ? URL.createObjectURL(selectedFile) : '';
-      preview.src = selectedUrl;
-      preview.style.display = selectedUrl ? 'block' : 'none';
-      downloadBtn.style.display = 'none';
-      status.textContent = selectedFile ? `Slika je spremna: ${selectedFile.name}` : 'Spremno. Slika ostaje u ovom pregledniku.';
-    });
-
-    function normalize(text) {
-      return text.toLocaleLowerCase('hr-HR').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    }
-
-    function removeBackground(source) {
-      const canvas = document.createElement('canvas');
-      canvas.width = source.naturalWidth;
-      canvas.height = source.naturalHeight;
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      ctx.drawImage(source, 0, 0);
-      const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const { data, width, height } = image;
-      const samples = [[0,0], [width-1,0], [0,height-1], [width-1,height-1], [Math.floor(width/2),0], [0,Math.floor(height/2)]];
-      const bg = [0, 0, 0];
-      for (const [x, y] of samples) { const i = (y * width + x) * 4; bg[0] += data[i]; bg[1] += data[i+1]; bg[2] += data[i+2]; }
-      bg[0] /= samples.length; bg[1] /= samples.length; bg[2] /= samples.length;
-      for (let i = 0; i < data.length; i += 4) {
-        const distance = Math.hypot(data[i] - bg[0], data[i+1] - bg[1], data[i+2] - bg[2]);
-        const spread = Math.max(data[i], data[i+1], data[i+2]) - Math.min(data[i], data[i+1], data[i+2]);
-        if (distance < 42 && spread < 55) data[i+3] = 0;
-      }
-      ctx.putImageData(image, 0, 0);
-      return canvas.toDataURL('image/png');
-    }
-
-    async function runAgentTool() {
-      const task = message.value.trim();
-      const normalized = normalize(task);
-      downloadBtn.style.display = 'none';
-      if (!task) { status.textContent = 'Opišite što želite napraviti.'; return; }
-      if (selectedFile && (normalized.includes('pozadin') || normalized.includes('transparent') || normalized.includes('izrezi'))) {
-        askBtn.disabled = true;
-        status.textContent = 'CupoBot prepoznaje sliku i poziva: Brisanje pozadine…';
-        const image = new Image();
-        image.onload = () => {
-          const output = removeBackground(image);
-          downloadBtn.href = output;
-          downloadBtn.style.display = 'inline-flex';
-          answer.textContent = 'CupoBot je automatski odabrao naš alat „Brisanje pozadine”. Obrada je izvedena lokalno u pregledniku; slika nije poslana na server.';
-          status.textContent = 'Alat je završio obradu.';
-          askBtn.disabled = false;
-        };
-        image.onerror = () => { status.textContent = 'Slika se ne može otvoriti.'; askBtn.disabled = false; };
-        image.src = selectedUrl;
-        return;
-      }
-      askBtn.disabled = true;
-      status.textContent = 'CupoBot obrađuje zadatak…';
-      try {
-        const response = await fetch(window.HK_CUPOBOT_ENDPOINT || '/api/cupobot', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ message: task, client: 'hrvatski-kanal-studio', hasImage: Boolean(selectedFile) }),
-        });
-        if (!response.ok) throw new Error(`Bridge HTTP ${response.status}`);
-        const data = await response.json();
-        answer.textContent = data.text || data.answer || 'CupoBot nije vratio tekstualni odgovor.';
-        status.textContent = data.requiresApproval ? 'Nacrt čeka odobrenje.' : 'Odgovor je spreman.';
-      } catch (error) {
-        status.textContent = 'Privatni CupoBot hub još nije spojen.';
-        answer.textContent = 'Za ovu vrstu zadatka treba spojiti privatni CupoBot bridge server-side. API ključevi ne idu u browser.';
-      } finally { askBtn.disabled = false; }
-    }
-
-    askBtn.addEventListener('click', runAgentTool);
-  </script>
+  <script src="../vendor/qrcode.min.js"></script>
+  <script src="../vendor/jspdf.umd.min.js"></script>
+  <script src="./cupobot-agent.js"></script>
 </body>
 </html>
