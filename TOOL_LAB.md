@@ -7,6 +7,7 @@
 - **Machine-readable inventory:** [`TOOL_REGISTRY.json`](TOOL_REGISTRY.json)
 - **Instructions for connected agents:** [`AGENTS.md`](AGENTS.md)
 - **Local Studio:** [`README.md`](README.md)
+- **Private manual test ground:** [`hrvatski-kanal-qa-lab`](https://github.com/HrvatskiKanal/hrvatski-kanal-qa-lab) — no public deployment
 
 The registry declares every known relevant repository, its role, test command, deployment model, and cost/privacy boundary.
 
@@ -15,6 +16,7 @@ The registry declares every known relevant repository, its role, test command, d
 | Area | Canonical repository | Intended use | What does not belong there |
 |---|---|---|---|
 | Local Tool Lab | [`hrvatski-kanal-studio`](https://github.com/HrvatskiKanal/hrvatski-kanal-studio) | Browser-local image, PDF, text, QR, direct-file and local-transcription tools | Server proxies, credentials, paid APIs, analytics trackers |
+| Private QA Lab | `hrvatski-kanal-qa-lab` | Manual target checks, test plans, fixture policy, and QA reports | A second published copy of the website or automatic deployment |
 | Integrated public site | [`hrvatskikanal30.rujna`](https://github.com/HrvatskiKanal/hrvatskikanal30.rujna) | Main-site pages, including weather, economy, and user-facing server features | A second copy of a Studio-only local tool |
 | Downloader backend | [`hk-video-downloader`](https://github.com/HrvatskiKanal/hk-video-downloader) | Self-hosted Node/yt-dlp/FFmpeg backend | GitHub Pages deployment or promises of zero bandwidth/hosting cost |
 | Old or review copies | Listed in the registry | Preserve until a deployment audit identifies their owner and URL | New features or parallel tool implementations |

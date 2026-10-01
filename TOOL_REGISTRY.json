@@ -5,6 +5,16 @@
   "purpose": "Canonical index for Hrvatski Kanal tools, repositories, checks, and operating boundaries.",
   "repositories": [
     {
+      "id": "qa-lab",
+      "repository": "HrvatskiKanal/hrvatski-kanal-qa-lab",
+      "role": "private-manual-qa-lab",
+      "status": "active-private",
+      "entrypoint": "TARGETS.json",
+      "tests": ["node scripts/validate-targets.mjs", "node scripts/run-target.mjs <target> <ref>"],
+      "deployment": "No public deployment or GitHub Pages. Manual GitHub Actions runs only.",
+      "networkBoundary": "Contains test plans, registries, and reports instead of a duplicate product website. GitHub Actions usage is manual and subject to GitHub account limits."
+    },
+    {
       "id": "studio",
       "repository": "HrvatskiKanal/hrvatski-kanal-studio",
       "role": "canonical-local-tool-lab",

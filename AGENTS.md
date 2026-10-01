@@ -11,6 +11,7 @@ This repository is the **single discovery hub** for HrvatskiKanal tools. Before 
 | Need | Canonical location | Rule |
 |---|---|---|
 | Browser-only image, PDF, text, QR, direct-file, or local transcription tool | `HrvatskiKanal/hrvatski-kanal-studio` | Add under `tools/`; update `app.js`, registry, README, and `npm test`. |
+| Private reusable branch/ref check | `HrvatskiKanal/hrvatski-kanal-qa-lab` | Use its manual target runner; do not copy product source or publish a preview. |
 | Integrated public site feature such as `/vrijeme` or `/ekonomija` | `HrvatskiKanal/hrvatskikanal30.rujna` | Keep live public-source behavior explicit and type-check it. |
 | Server-side multi-platform downloader | `HrvatskiKanal/hk-video-downloader` | Never present it as a GitHub Pages/static/no-bandwidth feature. Require local `yt-dlp` and FFmpeg. |
 | Repositories marked `legacy-or-review-copy` in the registry | Do not add new work there | Establish deployment ownership before changing, archiving, renaming, or migrating. |
@@ -29,7 +30,7 @@ This repository is the **single discovery hub** for HrvatskiKanal tools. Before 
 1. Classify the work as `local-browser`, `browser-api`, `browser-api-and-local-model`, `public-data`, or `server-side`.
 2. Find the canonical repository in `TOOL_REGISTRY.json`; do not search the organization blindly.
 3. Implement the smallest complete change, including error states and Croatian copy.
-4. Add or update an automated check and run the repository's documented verification command.
+4. Add or update an automated check and run the repository's documented verification command. Use the private QA Lab only for a repeatable branch/ref check or QA report.
 5. Update the registry and human documentation.
 6. Open one focused pull request with the changed inventory and exact validation results.
 

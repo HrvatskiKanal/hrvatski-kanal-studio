@@ -12,6 +12,7 @@ Ovaj repozitorij je **kanonski dom za browser-lokalne alate** i početna točka 
 - [`AGENTS.md`](AGENTS.md) — pravila za agente i dodavanje novih alata
 - [`TOOL_LAB.md`](TOOL_LAB.md) — struktura cijelog laboratorija i siguran plan za buduće objedinjavanje starih kopija
 - [`AUDIT_2026-10-01.md`](AUDIT_2026-10-01.md) — provjera svih 14 alata, ispravci i poznate granice
+- privatni [`hrvatski-kanal-qa-lab`](https://github.com/HrvatskiKanal/hrvatski-kanal-qa-lab) — ručna provjera grana bez javnog previewa ili kopiranja produkcijske stranice
 
 Novi lokalni alat pripada ovdje, u `tools/`. Alati kojima stvarno treba poslužitelj (npr. višestruki video downloader) ostaju odvojeni i moraju jasno navesti trošak CPU-a, prometa i hostinga.
 
