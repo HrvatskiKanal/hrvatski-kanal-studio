@@ -16,14 +16,14 @@ fileInput.addEventListener('change', () => {
   preview.src = selectedUrls[0] || '';
   preview.style.display = selectedUrls[0] ? 'block' : 'none';
   downloadBtn.style.display = 'none';
-  status.textContent = selectedFiles.length ? `${selectedFiles.length} datoteka spremno za CupoBota.` : 'Spremno.';
+  status.textContent = selectedFiles.length ? `${selectedFiles.length} datoteka spremno za Hrvatski Kanal AI.` : 'Spremno.';
 });
 
 function normalize(text) {
   return text.toLocaleLowerCase('hr-HR').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 function say(tool, text) {
-  answer.textContent = `CupoBot je odabrao alat „${tool}”. ${text}`;
+  answer.textContent = `Hrvatski Kanal AI je odabrao alat „${tool}”. ${text}`;
   status.textContent = 'Alat je završio obradu.';
 }
 function publish(dataUrl, filename, tool, text) {
@@ -74,37 +74,37 @@ async function imageTask(task) {
   const canvas = imageCanvas(image);
   const n = normalize(task);
   if (n.includes('pozadin') || n.includes('transparent') || n.includes('izrezi')) {
-    publish(rgbBackgroundRemoval(canvas).toDataURL('image/png'), 'cupo-bez-pozadine.png', 'Brisanje pozadine', 'Pozadina je uklonjena.');
+    publish(rgbBackgroundRemoval(canvas).toDataURL('image/png'), 'hk-ai-bez-pozadine.png', 'Brisanje pozadine', 'Pozadina je uklonjena.');
     return true;
   }
   if (n.includes('konvert') || n.includes('png') || n.includes('jpg') || n.includes('webp')) {
     const type = n.includes('webp') ? 'image/webp' : n.includes('jpg') || n.includes('jpeg') ? 'image/jpeg' : 'image/png';
-    publish(canvas.toDataURL(type, 0.92), `cupo-konvertirano.${type.split('/')[1].replace('jpeg', 'jpg')}`, 'Konverter slika', `Slika je pretvorena u ${type.split('/')[1].toUpperCase()}.`);
+    publish(canvas.toDataURL(type, 0.92), `hk-ai-konvertirano.${type.split('/')[1].replace('jpeg', 'jpg')}`, 'Konverter slika', `Slika je pretvorena u ${type.split('/')[1].toUpperCase()}.`);
     return true;
   }
   if (n.includes('optimiz') || n.includes('smanji') || n.includes('komprimir')) {
     const max = n.match(/(\d{3,4})\s*px/);
     const optimized = drawImage(image, max ? Number(max[1]) : 1200);
-    publish(optimized.toDataURL('image/jpeg', 0.8), 'cupo-optimizirano.jpg', 'Optimizacija slika', 'Veličina i kvaliteta slike su optimizirane.');
+    publish(optimized.toDataURL('image/jpeg', 0.8), 'hk-ai-optimizirano.jpg', 'Optimizacija slika', 'Veličina i kvaliteta slike su optimizirane.');
     return true;
   }
   if (n.includes('vodeni zig') || n.includes('vodeni z') || n.includes('watermark')) {
     const ctx = canvas.getContext('2d');
     const text = task.match(/(?:tekst|žig|zig)\s*[:=-]?\s*(.+)$/i)?.[1] || 'Hrvatski Kanal';
     ctx.save(); ctx.globalAlpha = 0.45; ctx.font = `700 ${Math.max(26, canvas.width / 10)}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.strokeText(text, canvas.width/2, canvas.height/2); ctx.fillStyle = '#fff'; ctx.fillText(text, canvas.width/2, canvas.height/2); ctx.restore();
-    publish(canvas.toDataURL('image/png'), 'cupo-vodeni-zig.png', 'Vodeni žig', 'Dodao sam tekstualni vodeni žig.');
+    publish(canvas.toDataURL('image/png'), 'hk-ai-vodeni-zig.png', 'Vodeni žig', 'Dodao sam tekstualni vodeni žig.');
     return true;
   }
   if (n.includes('zamut') || n.includes('blur')) {
-    const ctx = canvas.getContext('2d'); const copy = document.createElement('canvas'); copy.width = canvas.width; copy.height = canvas.height; const cctx = copy.getContext('2d'); cctx.filter = 'blur(15px)'; cctx.drawImage(canvas, 0, 0); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(copy,0,0); publish(canvas.toDataURL('image/png'), 'cupo-zamuceno.png', 'Zamućivanje slike', 'Primijenio sam zamućivanje.');
+    const ctx = canvas.getContext('2d'); const copy = document.createElement('canvas'); copy.width = canvas.width; copy.height = canvas.height; const cctx = copy.getContext('2d'); cctx.filter = 'blur(15px)'; cctx.drawImage(canvas, 0, 0); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(copy,0,0); publish(canvas.toDataURL('image/png'), 'hk-ai-zamuceno.png', 'Zamućivanje slike', 'Primijenio sam zamućivanje.');
     return true;
   }
   if (n.includes('okvir') || n.includes('sjena')) {
-    const pad = 24; const framed = document.createElement('canvas'); framed.width = canvas.width + pad*2; framed.height = canvas.height + pad*2; const ctx = framed.getContext('2d'); ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 18; ctx.fillRect(pad,pad,canvas.width,canvas.height); ctx.shadowColor = 'transparent'; ctx.drawImage(canvas,pad,pad); publish(framed.toDataURL('image/png'), 'cupo-okvir.png', 'Okvir i sjena', 'Dodao sam okvir i sjenu.');
+    const pad = 24; const framed = document.createElement('canvas'); framed.width = canvas.width + pad*2; framed.height = canvas.height + pad*2; const ctx = framed.getContext('2d'); ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 18; ctx.fillRect(pad,pad,canvas.width,canvas.height); ctx.shadowColor = 'transparent'; ctx.drawImage(canvas,pad,pad); publish(framed.toDataURL('image/png'), 'hk-ai-okvir.png', 'Okvir i sjena', 'Dodao sam okvir i sjenu.');
     return true;
   }
   if (n.includes('palet') || n.includes('boje')) {
-    const ctx = canvas.getContext('2d'); const data = ctx.getImageData(0,0,canvas.width,canvas.height).data; const buckets = new Map(); for (let i=0;i<data.length;i+=16) { const key = [Math.round(data[i]/32)*32,Math.round(data[i+1]/32)*32,Math.round(data[i+2]/32)*32].join(','); buckets.set(key,(buckets.get(key)||0)+1); } const colors = [...buckets.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6).map(([key])=>key.split(',').map(Number)); const palette = document.createElement('canvas'); palette.width=900; palette.height=180; const p=palette.getContext('2d'); colors.forEach((c,i)=>{p.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;p.fillRect(i*150,0,150,180);p.fillStyle=(c[0]+c[1]+c[2]>380)?'#111':'#fff';p.font='16px sans-serif';p.fillText(`#${c.map(x=>x.toString(16).padStart(2,'0')).join('')}`,i*150+12,160);}); publish(palette.toDataURL('image/png'), 'cupo-paleta.png', 'Paleta boja', 'Izvukao sam dominantne boje.');
+    const ctx = canvas.getContext('2d'); const data = ctx.getImageData(0,0,canvas.width,canvas.height).data; const buckets = new Map(); for (let i=0;i<data.length;i+=16) { const key = [Math.round(data[i]/32)*32,Math.round(data[i+1]/32)*32,Math.round(data[i+2]/32)*32].join(','); buckets.set(key,(buckets.get(key)||0)+1); } const colors = [...buckets.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6).map(([key])=>key.split(',').map(Number)); const palette = document.createElement('canvas'); palette.width=900; palette.height=180; const p=palette.getContext('2d'); colors.forEach((c,i)=>{p.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;p.fillRect(i*150,0,150,180);p.fillStyle=(c[0]+c[1]+c[2]>380)?'#111':'#fff';p.font='16px sans-serif';p.fillText(`#${c.map(x=>x.toString(16).padStart(2,'0')).join('')}`,i*150+12,160);}); publish(palette.toDataURL('image/png'), 'hk-ai-paleta.png', 'Paleta boja', 'Izvukao sam dominantne boje.');
     return true;
   }
   return false;
@@ -115,7 +115,7 @@ async function qrTask(task) {
   if (!value) throw new Error('Napišite tekst ili URL za QR kod.');
   const canvas = document.createElement('canvas');
   await new Promise((resolve, reject) => QRCode.toCanvas(canvas, value, { width: 600, margin: 3 }, (error) => error ? reject(error) : resolve()));
-  publish(canvas.toDataURL('image/png'), 'cupo-qr-kod.png', 'QR kod generator', 'QR kod je generiran.');
+  publish(canvas.toDataURL('image/png'), 'hk-ai-qr-kod.png', 'QR kod generator', 'QR kod je generiran.');
 }
 async function mergeTask() {
   if (selectedFiles.length < 2) throw new Error('Za kolaž učitajte najmanje dvije slike.');
@@ -124,7 +124,7 @@ async function mergeTask() {
   const canvas = document.createElement('canvas'); canvas.width = cols * 720; canvas.height = rows * 520;
   const ctx = canvas.getContext('2d'); ctx.fillStyle = '#0b1120'; ctx.fillRect(0, 0, canvas.width, canvas.height);
   images.forEach((image, index) => { const x = (index % cols) * 720; const y = Math.floor(index / cols) * 520; const ratio = Math.min(640 / image.naturalWidth, 440 / image.naturalHeight); const w = image.naturalWidth * ratio; const h = image.naturalHeight * ratio; ctx.drawImage(image, x + 40 + (640-w)/2, y + 40 + (440-h)/2, w, h); });
-  publish(canvas.toDataURL('image/png'), 'cupo-kolaz.png', 'Spajanje slika', 'Spojio sam slike u kolaž.');
+  publish(canvas.toDataURL('image/png'), 'hk-ai-kolaz.png', 'Spajanje slika', 'Spojio sam slike u kolaž.');
 }
 async function pdfTask() {
   if (!selectedFiles.length) throw new Error('Za PDF učitajte najmanje jednu sliku.');
@@ -135,7 +135,7 @@ async function pdfTask() {
     const pageWidth = pdf.internal.pageSize.getWidth(); const pageHeight = pdf.internal.pageSize.getHeight(); const ratio = Math.min(pageWidth / image.naturalWidth, pageHeight / image.naturalHeight); const w = image.naturalWidth * ratio; const h = image.naturalHeight * ratio;
     if (index) pdf.addPage(); pdf.addImage(data, 'JPEG', (pageWidth-w)/2, (pageHeight-h)/2, w, h);
   }
-  publish(pdf.output('datauristring'), 'cupo-slike.pdf', 'Slike u PDF', 'Pretvorio sam slike u PDF.');
+  publish(pdf.output('datauristring'), 'hk-ai-slike.pdf', 'Slike u PDF', 'Pretvorio sam slike u PDF.');
 }
 function downloadTask(task) {
   const url = task.match(/https?:\/\/\S+/i)?.[0];
@@ -156,7 +156,7 @@ function textTask(task) {
 async function runAgentTool() {
   const task = message.value.trim(); const n = normalize(task); downloadBtn.style.display = 'none';
   if (!task) { status.textContent = 'Opišite što želite napraviti.'; return; }
-  askBtn.disabled = true; status.textContent = 'CupoBot analizira zadatak i bira naš alat…';
+  askBtn.disabled = true; status.textContent = 'Hrvatski Kanal AI analizira zadatak i bira naš alat…';
   try {
     if (n.includes('qr') || n.includes('qrcode')) await qrTask(task);
     else if (n.includes('pdf') && selectedFiles.length) await pdfTask();
@@ -167,11 +167,11 @@ async function runAgentTool() {
     else if (n.includes('citaj tekst') || n.includes('procitaj')) textTask(task);
     else if (selectedFiles.length && await imageTask(task)) {}
     else {
-      const response = await fetch(window.HK_CUPOBOT_ENDPOINT || '/api/cupobot', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ message: task, client:'hrvatski-kanal-studio', hasImage:selectedFiles.length > 0 }) });
+      const response = await fetch(window.HK_AGENT_ENDPOINT || '/api/hk-agent', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({ message: task, client:'hrvatski-kanal-studio', hasImage:selectedFiles.length > 0 }) });
       if (!response.ok) throw new Error(`Bridge HTTP ${response.status}`);
-      const data = await response.json(); answer.textContent = data.text || data.answer || 'CupoBot nije vratio tekstualni odgovor.'; status.textContent = data.requiresApproval ? 'Nacrt čeka odobrenje.' : 'Odgovor je spreman.';
+      const data = await response.json(); answer.textContent = data.text || data.answer || 'Hrvatski Kanal AI nije vratio tekstualni odgovor.'; status.textContent = data.requiresApproval ? 'Nacrt čeka odobrenje.' : 'Odgovor je spreman.';
     }
-  } catch (error) { status.textContent = error.message || 'Alat nije uspio završiti obradu.'; answer.textContent = 'CupoBot nije poslao sliku niti ključ trećoj strani. Provjerite unos i pokušajte ponovno.'; }
+  } catch (error) { status.textContent = error.message || 'Alat nije uspio završiti obradu.'; answer.textContent = 'Hrvatski Kanal AI nije poslao sliku niti ključ trećoj strani. Provjerite unos i pokušajte ponovno.'; }
   finally { askBtn.disabled = false; }
 }
 askBtn.addEventListener('click', runAgentTool);

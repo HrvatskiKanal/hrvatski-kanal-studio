@@ -1,5 +1,5 @@
 const tools = [
-  { name: 'CupoBot', slug: 'cupobot', description: 'hrvatski istraživački alat', icon: '🧠', href: 'tools/cupobot.html', docsHref: 'https://github.com/Hrvatski-Kanal/cupobot-hub' },
+  { name: 'Hrvatski Kanal AI', slug: 'hrvatski-kanal-ai', description: 'hrvatski istraživački alat', icon: '🧠', href: 'tools/hrvatski-kanal-ai.html', docsHref: 'https://github.com/HrvatskiKanal/hrvatskikanal.com' },
   { name: 'Downloader', slug: 'downloader', description: 'URL, tekst i Base64 u datoteku', icon: '⬇️', href: 'tools/downloader.html' },
   { name: 'Vodeni žig', slug: 'vodeni-zig', description: 'tekstualni žig na slici', icon: '💧', href: 'tools/vodeni-zig.html' },
   { name: 'Paleta boja', slug: 'paleta-boja', description: 'dominantne boje iz slike', icon: '🎨', href: 'tools/paleta-boja.html' },

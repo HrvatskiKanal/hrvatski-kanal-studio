@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CupoBot — Hrvatski Kanal Studio</title>
+  <title>Hrvatski Kanal AI — Hrvatski Kanal Studio</title>
   <link rel="stylesheet" href="../styles.css" />
   <style>
     .agent-preview { display: none; max-width: 100%; max-height: 260px; margin-top: 12px; border-radius: 12px; }
@@ -15,10 +15,10 @@
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>CupoBot</span>
+      <span>Hrvatski Kanal AI</span>
     </div>
     <div class="tool-body">
-      <h1>CupoBot</h1>
+      <h1>Hrvatski Kanal AI</h1>
       <p>Neovisni hrvatski agent koji prepoznaje zadatak i poziva samo naše registrirane Studio alate.</p>
 
       <div class="tool-box">
@@ -26,23 +26,23 @@
         <textarea id="message" placeholder="Npr. konvertiraj sliku u WebP, napravi QR kod ili optimiziraj ovu sliku..."></textarea>
 
         <label class="agent-file label" for="fileInput">
-          Datoteka za CupoBota (opcionalno)
+          Datoteka za Hrvatski Kanal AI (opcionalno)
           <input id="fileInput" type="file" accept="image/*" multiple />
         </label>
-        <img id="preview" class="agent-preview" alt="Pregled datoteke za CupoBota" />
+        <img id="preview" class="agent-preview" alt="Pregled datoteke za Hrvatski Kanal AI" />
 
         <div class="row">
-          <button id="askBtn" class="btn btn-primary" type="button">Neka CupoBot odabere alat</button>
+          <button id="askBtn" class="btn btn-primary" type="button">Neka Hrvatski Kanal AI odabere alat</button>
         </div>
         <p id="status" class="label" role="status">Spremno. Slike ostaju u ovom pregledniku.</p>
-        <pre id="answer" class="panel agent-result">CupoBot će prepoznati zadatak i pozvati odgovarajući naš alat.</pre>
-        <a id="downloadBtn" class="btn btn-success" download="cupo-rezultat.png" style="display:none; width:max-content; margin-top:12px;">Preuzmi rezultat</a>
+        <pre id="answer" class="panel agent-result">Hrvatski Kanal AI će prepoznati zadatak i pozvati odgovarajući naš alat.</pre>
+        <a id="downloadBtn" class="btn btn-success" download="hk-ai-rezultat.png" style="display:none; width:max-content; margin-top:12px;">Preuzmi rezultat</a>
       </div>
     </div>
   </div>
 
   <script src="../vendor/qrcode.min.js"></script>
   <script src="../vendor/jspdf.umd.min.js"></script>
-  <script src="./cupobot-agent.js"></script>
+  <script src="./hrvatski-kanal-ai-agent.js"></script>
 </body>
 </html>
