@@ -8,51 +8,37 @@
 </head>
 <body>
   <div class="tool-page">
-    <div class="tool-topbar">
-      <a href="../index.html">← Natrag</a>
-      <span>Brojač teksta</span>
-    </div>
+    <div class="tool-topbar"><a href="../index.html">← Natrag</a><span>Brojač teksta</span></div>
     <div class="tool-body">
       <h1>Brojač teksta</h1>
-      <p>Provjeri broj znakova, riječi, rečenica i složenih pojmova.</p>
-
+      <p>Provjeri broj znakova, riječi, rečenica i procijenjeno vrijeme čitanja.</p>
       <div class="tool-box">
         <textarea id="textInput" placeholder="Upiši tekst ovdje..."></textarea>
-        <div class="row">
-          <button id="countBtn" class="btn btn-primary" type="button">Izračunaj</button>
-        </div>
-        <div class="row" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));">
-          <div class="panel" style="padding:12px; border-radius:12px;">
-            <div class="label" style="font-size:0.72rem;">Riječi</div>
-            <div id="wordCount" style="font-size:1.8rem; font-weight:800;">0</div>
-          </div>
-          <div class="panel" style="padding:12px; border-radius:12px;">
-            <div class="label" style="font-size:0.72rem;">Znakovi</div>
-            <div id="charCount" style="font-size:1.8rem; font-weight:800;">0</div>
-          </div>
-          <div class="panel" style="padding:12px; border-radius:12px;">
-            <div class="label" style="font-size:0.72rem;">Rečenice</div>
-            <div id="sentenceCount" style="font-size:1.8rem; font-weight:800;">0</div>
-          </div>
+        <div class="row"><button id="countBtn" class="btn btn-primary" type="button">Izračunaj</button></div>
+        <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));">
+          <div class="panel" style="padding:12px;border-radius:12px;"><div class="label" style="font-size:.72rem;">Riječi</div><div id="wordCount" style="font-size:1.8rem;font-weight:800;">0</div></div>
+          <div class="panel" style="padding:12px;border-radius:12px;"><div class="label" style="font-size:.72rem;">Znakovi</div><div id="charCount" style="font-size:1.8rem;font-weight:800;">0</div></div>
+          <div class="panel" style="padding:12px;border-radius:12px;"><div class="label" style="font-size:.72rem;">Rečenice</div><div id="sentenceCount" style="font-size:1.8rem;font-weight:800;">0</div></div>
+          <div class="panel" style="padding:12px;border-radius:12px;"><div class="label" style="font-size:.72rem;">Čitanje (min)</div><div id="readingTime" style="font-size:1.8rem;font-weight:800;">0</div></div>
         </div>
       </div>
     </div>
   </div>
-
   <script>
     const textInput = document.getElementById('textInput');
     const countBtn = document.getElementById('countBtn');
-
-    countBtn.addEventListener('click', () => {
+    function countText() {
       const text = textInput.value.trim();
       const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
       const chars = text.length;
-      const sentences = text ? text.split(/[.!?]+/).filter(Boolean).length : 0;
-
+      const sentences = text ? text.split(/[.!?]+/).filter(part => part.trim()).length : 0;
       document.getElementById('wordCount').textContent = words;
       document.getElementById('charCount').textContent = chars;
       document.getElementById('sentenceCount').textContent = sentences;
-    });
+      document.getElementById('readingTime').textContent = words ? Math.max(1, Math.ceil(words / 200)) : 0;
+    }
+    countBtn.addEventListener('click', countText);
+    textInput.addEventListener('input', countText);
   </script>
 </body>
 </html>

@@ -3,93 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Optimizacija slika</title>
+  <title>Slike u PDF</title>
   <link rel="stylesheet" href="../styles.css" />
-  <style>
-    .preview-image { max-width: 100%; max-height: 360px; display: block; border-radius: 12px; }
-  </style>
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>Optimizacija slika</span>
+      <span>Slike u PDF</span>
     </div>
     <div class="tool-body">
-      <h1>Optimizacija slika</h1>
-      <p>Promijeni veličinu i kvalitetu slike za manju veličinu datoteke.</p>
+      <h1>Slike u PDF</h1>
+      <p>Dodaj više slika i pretvori ih u PDF.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" />
-          Učitaj sliku
+          <input id="fileInput" type="file" accept="image/*" multiple />
+          Učitaj slike
         </label>
-
         <div class="row">
-          <label>Širina:</label>
-          <input id="widthInput" type="number" value="1200" min="100" max="3000" />
+          <button id="createPdfBtn" class="btn btn-primary" type="button">Napravi PDF</button>
         </div>
-        <div class="row">
-          <label>Kvaliteta:</label>
-          <input id="qualityInput" type="range" min="0.1" max="1" step="0.1" value="0.8" />
-        </div>
-        <div class="row">
-          <button id="optimizeBtn" class="btn btn-primary" type="button">Optimiziraj</button>
-          <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
-        </div>
-      </div>
-
-      <div class="tool-box" style="margin-top:16px;">
-        <img id="previewImage" class="preview-image" alt="Pretpregled" style="display:none;" />
       </div>
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
   <script>
     const fileInput = document.getElementById('fileInput');
-    const widthInput = document.getElementById('widthInput');
-    const qualityInput = document.getElementById('qualityInput');
-    const optimizeBtn = document.getElementById('optimizeBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const previewImage = document.getElementById('previewImage');
-    let currentImage = null;
+    const createPdfBtn = document.getElementById('createPdfBtn');
+    let images = [];
 
     fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          currentImage = img;
-          previewImage.src = e.target.result;
-          previewImage.style.display = 'block';
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      images = Array.from(event.target.files || []);
     });
 
-    optimizeBtn.addEventListener('click', () => {
-      if (!currentImage) return;
-      const canvas = document.createElement('canvas');
-      const ratio = currentImage.width / currentImage.height;
-      canvas.width = Number(widthInput.value) || 1200;
-      canvas.height = Math.round(canvas.width / ratio);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', Number(qualityInput.value));
-      previewImage.src = dataUrl;
-      previewImage.style.display = 'block';
-      downloadBtn.disabled = false;
-    });
-
-    downloadBtn.addEventListener('click', () => {
-      if (!previewImage.src) return;
-      const a = document.createElement('a');
-      a.download = 'optimizirana-slika.jpg';
-      a.href = previewImage.src;
-      a.click();
+    createPdfBtn.addEventListener('click', async () => {
+      if (!images.length || !window.jspdf) return;
+      createPdfBtn.disabled = true;
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        const dataUrls = await Promise.all(images.map(file => new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        })));
+        for (const [index, dataUrl] of dataUrls.entries()) {
+          const img = await new Promise((resolve, reject) => {
+            const image = new Image(); image.onload = () => resolve(image); image.onerror = reject; image.src = dataUrl;
+          });
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const ratio = Math.min(pageWidth / img.width, pageHeight / img.height);
+          const w = img.width * ratio, h = img.height * ratio;
+          pdf.addImage(dataUrl, 'JPEG', (pageWidth - w) / 2, (pageHeight - h) / 2, w, h);
+          if (index < dataUrls.length - 1) pdf.addPage();
+        }
+        pdf.save('slike.pdf');
+      } finally { createPdfBtn.disabled = false; }
     });
   </script>
 </body>

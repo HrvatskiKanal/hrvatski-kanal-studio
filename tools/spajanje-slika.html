@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slike u PDF</title>
+  <title>Spajanje slika</title>
   <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .canvas-wrap { display: flex; justify-content: center; margin-top: 18px; }
+    canvas { max-width: 100%; border-radius: 16px; background: #0b1120; }
+  </style>
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>Slike u PDF</span>
+      <span>Spajanje slika</span>
     </div>
     <div class="tool-body">
-      <h1>Slike u PDF</h1>
-      <p>Dodaj više slika i pretvori ih u PDF.</p>
+      <h1>Spajanje slika</h1>
+      <p>Učitaj 2–4 slike i spoji ih u kolaž.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
@@ -22,46 +26,65 @@
           Učitaj slike
         </label>
         <div class="row">
-          <button id="createPdfBtn" class="btn btn-primary" type="button">Napravi PDF</button>
+          <button id="mergeBtn" class="btn btn-primary" type="button">Spoji</button>
+          <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
         </div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="canvas" width="800" height="600"></canvas>
       </div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
   <script>
     const fileInput = document.getElementById('fileInput');
-    const createPdfBtn = document.getElementById('createPdfBtn');
+    const mergeBtn = document.getElementById('mergeBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
     let images = [];
 
     fileInput.addEventListener('change', (event) => {
-      images = Array.from(event.target.files || []);
-    });
-
-    createPdfBtn.addEventListener('click', () => {
-      if (!images.length) return;
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF();
-      images.forEach((file, index) => {
+      images = [];
+      const files = Array.from(event.target.files || []);
+      files.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
-          img.onload = () => {
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const ratio = Math.min(pageWidth / img.width, pageHeight / img.height);
-            const w = img.width * ratio;
-            const h = img.height * ratio;
-            const x = (pageWidth - w) / 2;
-            const y = (pageHeight - h) / 2;
-            pdf.addImage(e.target.result, 'PNG', x, y, w, h);
-            if (index < images.length - 1) pdf.addPage();
-            if (index === images.length - 1) pdf.save('slike.pdf');
-          };
+          img.onload = () => images.push(img);
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       });
+    });
+
+    mergeBtn.addEventListener('click', () => {
+      if (images.length === 0) return;
+      const cols = Math.min(2, images.length);
+      const rows = Math.ceil(images.length / cols);
+      canvas.width = cols * 360;
+      canvas.height = rows * 260;
+      ctx.fillStyle = '#0b1120';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      images.forEach((img, index) => {
+        const x = (index % cols) * 360;
+        const y = Math.floor(index / cols) * 260;
+        const ratio = Math.min(320 / img.width, 220 / img.height);
+        const w = img.width * ratio;
+        const h = img.height * ratio;
+        ctx.drawImage(img, x + 20, y + 20, w, h);
+      });
+
+      downloadBtn.disabled = false;
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.download = 'kolaž.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
     });
   </script>
 </body>
