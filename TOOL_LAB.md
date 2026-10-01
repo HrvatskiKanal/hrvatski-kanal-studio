@@ -19,7 +19,7 @@ The registry declares every known relevant repository, its role, test command, d
 | Private QA Lab | `hrvatski-kanal-qa-lab` | Manual target checks, test plans, fixture policy, and QA reports | A second published copy of the website or automatic deployment |
 | Production website | [`https://hrvatskikanal.com/`](https://hrvatskikanal.com/) | The one public Hrvatski Kanal website | Testing unreviewed changes directly on production |
 | Current site candidate | The user-designated `site-release` target in the private QA Lab (currently [`hrvatskikanal-01-listopad`](https://github.com/HrvatskiKanal/hrvatskikanal-01-listopad)) | Latest date-stamped source for pre-release build, tools, weather, market, RSS, and visual checks | Guessing the source from date or repository name |
-| Downloader backend | [`hk-video-downloader`](https://github.com/HrvatskiKanal/hk-video-downloader) | Self-hosted Node/yt-dlp/FFmpeg backend | GitHub Pages deployment or promises of zero bandwidth/hosting cost |
+| Downloader backend | [`hk-video-downloader`](https://github.com/HrvatskiKanal/hk-video-downloader) | Local 0 € mode on the user's computer, or explicitly owned self-hosted Node/yt-dlp/FFmpeg backend | GitHub Pages/Actions downloader deployment or promises of zero bandwidth/hosting cost |
 | Old or review copies | Listed in the registry | Preserve until a deployment audit identifies their owner and URL | New features or parallel tool implementations |
 
 ## Tool classes

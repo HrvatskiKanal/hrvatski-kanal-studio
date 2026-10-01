@@ -23,6 +23,7 @@ This repository is the **single discovery hub** for HrvatskiKanal tools. Before 
 - Do not select a date-stamped site repository by name or update time. The user updates the QA Lab's `site-release` pointer whenever a newer candidate is ready for testing.
 - Use only the owner's explicitly authorised GitHub integration. Never invite collaborators, add tokens/secrets/deploy keys/webhooks, change visibility/billing/deployment, force-push, delete branches, or bypass protected-main pull-request rules.
 - Do not claim that a server feature has no cost. Distinguish source-code cost from CPU, disk, bandwidth, and hosting cost.
+- For the downloader, prefer the documented local 0 € mode on the user's computer. GitHub Pages is UI-only and GitHub Actions must not become a public download API.
 - Use pinned local assets for static tools where practical. Any unavoidable first-use model download must be visible in the tool UI and README.
 - Preserve user privacy: browser-local tools must not upload their content to a Hrvatski Kanal server.
 - A pull request that changes the tool inventory must update `TOOL_REGISTRY.json`, `TOOL_LAB.md`, `README.md`, and validation in the same change.

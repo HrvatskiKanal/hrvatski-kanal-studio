@@ -50,7 +50,8 @@
       "entrypoint": "server.js",
       "tests": ["npm test"],
       "deployment": "Self-hosted Node.js server",
-      "networkBoundary": "Uses host CPU, temporary disk, and bandwidth. No paid API is required, but public hosting is not inherently cost-free."
+      "networkBoundary": "Free-first: local 0 € mode runs Node.js, yt-dlp, and FFmpeg on the user's computer. Public hosting uses host CPU, temporary disk, and bandwidth; GitHub Pages and GitHub Actions are not downloader backends. No paid API is required, but public hosting is not inherently cost-free.",
+      "agentGuide": "FREE_FIRST.md and AGENTS.md"
     },
     {
       "id": "legacy-site-export-1",
@@ -95,7 +96,7 @@
     "For the production website, read the site-release pointer in the private QA Lab. The user designates the current date-stamped source; never infer it from a repository name.",
     "Only owner-authorised connectors may write. Never add collaborators, secrets, deploy keys, webhooks, deployments, billing changes, direct main pushes, force pushes, or deletes.",
     "Add browser-only utilities to the Studio unless a server is technically required.",
-    "Do not claim a server-side feature is free or works on GitHub Pages without a documented, verifiable deployment path.",
+    "Do not claim a server-side feature is free or works on GitHub Pages without a documented, verifiable deployment path; prefer the downloader's local 0 € mode.",
     "Update this registry, README, and tests in the same pull request whenever the tool inventory changes.",
     "Do not edit or create new tools in a legacy-or-review-copy repository."
   ]
