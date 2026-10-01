@@ -17,7 +17,8 @@ The registry declares every known relevant repository, its role, test command, d
 |---|---|---|---|
 | Local Tool Lab | [`hrvatski-kanal-studio`](https://github.com/HrvatskiKanal/hrvatski-kanal-studio) | Browser-local image, PDF, text, QR, direct-file and local-transcription tools | Server proxies, credentials, paid APIs, analytics trackers |
 | Private QA Lab | `hrvatski-kanal-qa-lab` | Manual target checks, test plans, fixture policy, and QA reports | A second published copy of the website or automatic deployment |
-| Integrated public site | [`hrvatskikanal30.rujna`](https://github.com/HrvatskiKanal/hrvatskikanal30.rujna) | Main-site pages, including weather, economy, and user-facing server features | A second copy of a Studio-only local tool |
+| Production website | [`https://hrvatskikanal.com/`](https://hrvatskikanal.com/) | The one public Hrvatski Kanal website | Testing unreviewed changes directly on production |
+| Current site candidate | The user-designated `site-release` target in the private QA Lab (currently [`hrvatskikanal-01-listopad`](https://github.com/HrvatskiKanal/hrvatskikanal-01-listopad)) | Latest date-stamped source for pre-release build, tools, weather, market, RSS, and visual checks | Guessing the source from date or repository name |
 | Downloader backend | [`hk-video-downloader`](https://github.com/HrvatskiKanal/hk-video-downloader) | Self-hosted Node/yt-dlp/FFmpeg backend | GitHub Pages deployment or promises of zero bandwidth/hosting cost |
 | Old or review copies | Listed in the registry | Preserve until a deployment audit identifies their owner and URL | New features or parallel tool implementations |
 
@@ -33,7 +34,7 @@ The registry declares every known relevant repository, its role, test command, d
 
 ## Working agreement
 
-1. **Find, do not guess.** Read the registry before starting work.
+1. **Find, do not guess.** Read the registry and the private QA Lab's `TARGETS.json` before starting work. Only the user selects the current date-stamped site candidate.
 2. **One canonical implementation.** Add a capability in its designated repository; link to it elsewhere instead of copying it.
 3. **No silent dependencies.** Local asset, remote model, public feed, server binary, and paid service must be declared.
 4. **Test with the change.** Every tool change includes a runnable check and the check result in its pull request.

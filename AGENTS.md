@@ -12,7 +12,7 @@ This repository is the **single discovery hub** for HrvatskiKanal tools. Before 
 |---|---|---|
 | Browser-only image, PDF, text, QR, direct-file, or local transcription tool | `HrvatskiKanal/hrvatski-kanal-studio` | Add under `tools/`; update `app.js`, registry, README, and `npm test`. |
 | Private reusable branch/ref check | `HrvatskiKanal/hrvatski-kanal-qa-lab` | Use its manual target runner; do not copy product source or publish a preview. |
-| Integrated public site feature such as `/vrijeme` or `/ekonomija` | `HrvatskiKanal/hrvatskikanal30.rujna` | Keep live public-source behavior explicit and type-check it. |
+| Integrated feature for the one public site `https://hrvatskikanal.com/` | The private QA Lab's user-designated `site-release` target | Use the currently designated date-stamped candidate; run typecheck, build, tool, data, and visual checks before production. |
 | Server-side multi-platform downloader | `HrvatskiKanal/hk-video-downloader` | Never present it as a GitHub Pages/static/no-bandwidth feature. Require local `yt-dlp` and FFmpeg. |
 | Repositories marked `legacy-or-review-copy` in the registry | Do not add new work there | Establish deployment ownership before changing, archiving, renaming, or migrating. |
 
@@ -20,6 +20,8 @@ This repository is the **single discovery hub** for HrvatskiKanal tools. Before 
 
 - Do not create a new tools repository when an existing canonical repository fits.
 - Do not introduce paid APIs, credentials, a payment flow, a tracking SDK, or a remote proxy without updating the registry and documenting why it is technically required.
+- Do not select a date-stamped site repository by name or update time. The user updates the QA Lab's `site-release` pointer whenever a newer candidate is ready for testing.
+- Use only the owner's explicitly authorised GitHub integration. Never invite collaborators, add tokens/secrets/deploy keys/webhooks, change visibility/billing/deployment, force-push, delete branches, or bypass protected-main pull-request rules.
 - Do not claim that a server feature has no cost. Distinguish source-code cost from CPU, disk, bandwidth, and hosting cost.
 - Use pinned local assets for static tools where practical. Any unavoidable first-use model download must be visible in the tool UI and README.
 - Preserve user privacy: browser-local tools must not upload their content to a Hrvatski Kanal server.

@@ -25,14 +25,22 @@
       "networkBoundary": "No application backend, accounts, paid APIs, or CDN assets. Individual tools work locally in the browser; transcription first downloads its open model into the browser cache."
     },
     {
-      "id": "site",
-      "repository": "HrvatskiKanal/hrvatskikanal30.rujna",
-      "role": "integrated-main-site",
-      "status": "active",
+      "id": "site-release",
+      "repository": "HrvatskiKanal/hrvatskikanal-01-listopad",
+      "role": "current-user-designated-production-candidate",
+      "status": "active-test-source",
+      "productionUrl": "https://hrvatskikanal.com/",
       "entrypoints": ["/vrijeme", "/ekonomija", "/preuzimanje-videa"],
-      "tests": ["npm run typecheck", "npm test"],
+      "tests": ["npm ci", "npm run typecheck", "npm run build:dev"],
       "deployment": "Node/TanStack server application",
-      "networkBoundary": "Live weather and market pages use public data sources. The video downloader requires a self-hosted server with locally installed yt-dlp and FFmpeg; it is not a GitHub Pages feature."
+      "networkBoundary": "The one production site is hrvatskikanal.com. Live weather, markets, and RSS use public sources with fallbacks. The video downloader requires administrator-installed local yt-dlp and FFmpeg; it is not a GitHub Pages feature."
+    },
+    {
+      "id": "previous-site-release",
+      "repository": "HrvatskiKanal/hrvatskikanal30.rujna",
+      "role": "previous-date-stamped-candidate",
+      "status": "do-not-assume-current",
+      "action": "Do not use as the active QA source unless the user explicitly designates it again."
     },
     {
       "id": "downloader-server",
@@ -84,6 +92,8 @@
   ],
   "agentRules": [
     "Read this file and AGENTS.md before adding or moving a tool.",
+    "For the production website, read the site-release pointer in the private QA Lab. The user designates the current date-stamped source; never infer it from a repository name.",
+    "Only owner-authorised connectors may write. Never add collaborators, secrets, deploy keys, webhooks, deployments, billing changes, direct main pushes, force pushes, or deletes.",
     "Add browser-only utilities to the Studio unless a server is technically required.",
     "Do not claim a server-side feature is free or works on GitHub Pages without a documented, verifiable deployment path.",
     "Update this registry, README, and tests in the same pull request whenever the tool inventory changes.",
