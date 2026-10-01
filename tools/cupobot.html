@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CupoBot — Hrvatski Kanal Studio</title>
   <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .agent-preview { display: none; max-width: 100%; max-height: 260px; margin-top: 12px; border-radius: 12px; }
+    .agent-file { display: grid; gap: 8px; }
+    .agent-result { white-space: pre-wrap; padding: 16px; border-radius: 12px; min-height: 100px; }
+  </style>
 </head>
 <body>
   <div class="tool-page">
@@ -14,43 +19,102 @@
     </div>
     <div class="tool-body">
       <h1>CupoBot</h1>
-      <p>Neovisni hrvatski istraživački mozak pozvan kao Studio alat. Studio je klijent; privatni hub ostaje izvor istine.</p>
+      <p>Neovisni hrvatski agent koji prepoznaje zadatak i poziva samo naše registrirane Studio alate.</p>
 
       <div class="tool-box">
         <label class="label" for="message">Pitanje ili zadatak</label>
-        <textarea id="message" placeholder="Npr. Istraži što se danas događa u Hrvatskoj i EU-u..."></textarea>
+        <textarea id="message" placeholder="Npr. ukloni pozadinu s ove slike ili istraži temu..."></textarea>
+
+        <label class="agent-file label" for="fileInput">
+          Slika za CupoBota (opcionalno)
+          <input id="fileInput" type="file" accept="image/*" />
+        </label>
+        <img id="preview" class="agent-preview" alt="Pregled slike za CupoBota" />
+
         <div class="row">
-          <button id="askBtn" class="btn btn-primary" type="button">Pošalji CupoBotu</button>
+          <button id="askBtn" class="btn btn-primary" type="button">Neka CupoBot odabere alat</button>
         </div>
-        <p id="status" class="label" role="status">Studio bridge još nije konfiguriran.</p>
-        <pre id="answer" class="panel" style="white-space:pre-wrap; padding:16px; border-radius:12px; min-height:100px;">CupoBot će ovdje odgovoriti kada administrator spoji privatni hub preko sigurnog bridgea.</pre>
+        <p id="status" class="label" role="status">Spremno. Slika ostaje u ovom pregledniku.</p>
+        <pre id="answer" class="panel agent-result">CupoBot će prepoznati zadatak i pozvati odgovarajući naš alat.</pre>
+        <a id="downloadBtn" class="btn btn-success" download="cupo-bez-pozadine.png" style="display:none; width:max-content; margin-top:12px;">Preuzmi rezultat</a>
       </div>
     </div>
   </div>
 
   <script>
     const message = document.getElementById('message');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
     const askBtn = document.getElementById('askBtn');
     const status = document.getElementById('status');
     const answer = document.getElementById('answer');
+    const downloadBtn = document.getElementById('downloadBtn');
+    let selectedFile = null;
+    let selectedUrl = '';
 
-    function endpoint() {
-      return window.HK_CUPOBOT_ENDPOINT || '/api/cupobot';
+    fileInput.addEventListener('change', () => {
+      selectedFile = fileInput.files?.[0] || null;
+      if (selectedUrl) URL.revokeObjectURL(selectedUrl);
+      selectedUrl = selectedFile ? URL.createObjectURL(selectedFile) : '';
+      preview.src = selectedUrl;
+      preview.style.display = selectedUrl ? 'block' : 'none';
+      downloadBtn.style.display = 'none';
+      status.textContent = selectedFile ? `Slika je spremna: ${selectedFile.name}` : 'Spremno. Slika ostaje u ovom pregledniku.';
+    });
+
+    function normalize(text) {
+      return text.toLocaleLowerCase('hr-HR').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
-    askBtn.addEventListener('click', async () => {
-      const text = message.value.trim();
-      if (!text) {
-        status.textContent = 'Upišite pitanje ili zadatak.';
+    function removeBackground(source) {
+      const canvas = document.createElement('canvas');
+      canvas.width = source.naturalWidth;
+      canvas.height = source.naturalHeight;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(source, 0, 0);
+      const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const { data, width, height } = image;
+      const samples = [[0,0], [width-1,0], [0,height-1], [width-1,height-1], [Math.floor(width/2),0], [0,Math.floor(height/2)]];
+      const bg = [0, 0, 0];
+      for (const [x, y] of samples) { const i = (y * width + x) * 4; bg[0] += data[i]; bg[1] += data[i+1]; bg[2] += data[i+2]; }
+      bg[0] /= samples.length; bg[1] /= samples.length; bg[2] /= samples.length;
+      for (let i = 0; i < data.length; i += 4) {
+        const distance = Math.hypot(data[i] - bg[0], data[i+1] - bg[1], data[i+2] - bg[2]);
+        const spread = Math.max(data[i], data[i+1], data[i+2]) - Math.min(data[i], data[i+1], data[i+2]);
+        if (distance < 42 && spread < 55) data[i+3] = 0;
+      }
+      ctx.putImageData(image, 0, 0);
+      return canvas.toDataURL('image/png');
+    }
+
+    async function runAgentTool() {
+      const task = message.value.trim();
+      const normalized = normalize(task);
+      downloadBtn.style.display = 'none';
+      if (!task) { status.textContent = 'Opišite što želite napraviti.'; return; }
+      if (selectedFile && (normalized.includes('pozadin') || normalized.includes('transparent') || normalized.includes('izrezi'))) {
+        askBtn.disabled = true;
+        status.textContent = 'CupoBot prepoznaje sliku i poziva: Brisanje pozadine…';
+        const image = new Image();
+        image.onload = () => {
+          const output = removeBackground(image);
+          downloadBtn.href = output;
+          downloadBtn.style.display = 'inline-flex';
+          answer.textContent = 'CupoBot je automatski odabrao naš alat „Brisanje pozadine”. Obrada je izvedena lokalno u pregledniku; slika nije poslana na server.';
+          status.textContent = 'Alat je završio obradu.';
+          askBtn.disabled = false;
+        };
+        image.onerror = () => { status.textContent = 'Slika se ne može otvoriti.'; askBtn.disabled = false; };
+        image.src = selectedUrl;
         return;
       }
       askBtn.disabled = true;
       status.textContent = 'CupoBot obrađuje zadatak…';
       try {
-        const response = await fetch(endpoint(), {
+        const response = await fetch(window.HK_CUPOBOT_ENDPOINT || '/api/cupobot', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ message: text, client: 'hrvatski-kanal-studio' }),
+          body: JSON.stringify({ message: task, client: 'hrvatski-kanal-studio', hasImage: Boolean(selectedFile) }),
         });
         if (!response.ok) throw new Error(`Bridge HTTP ${response.status}`);
         const data = await response.json();
@@ -58,11 +122,11 @@
         status.textContent = data.requiresApproval ? 'Nacrt čeka odobrenje.' : 'Odgovor je spreman.';
       } catch (error) {
         status.textContent = 'Privatni CupoBot hub još nije spojen.';
-        answer.textContent = 'Studio alat je pripremljen, ali bridge prema privatnom CupoBot hubu nije javno izložen. Administrator ga treba spojiti server-side, bez API ključeva u browseru.';
-      } finally {
-        askBtn.disabled = false;
-      }
-    });
+        answer.textContent = 'Za ovu vrstu zadatka treba spojiti privatni CupoBot bridge server-side. API ključevi ne idu u browser.';
+      } finally { askBtn.disabled = false; }
+    }
+
+    askBtn.addEventListener('click', runAgentTool);
   </script>
 </body>
 </html>
