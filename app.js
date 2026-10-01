@@ -10,7 +10,8 @@ const tools = [
   { name: 'Spajanje slika', slug: 'spajanje-slika', description: 'Spoji više slika u kolaž.', icon: '🧩', href: 'tools/spajanje-slika.html' },
   { name: 'Okvir i sjena', slug: 'okvir-i-sjena', description: 'Dodaj okvir, sjenu i stil.', icon: '🖼️', href: 'tools/okvir-i-sjena.html' },
   { name: 'Vodeni žig', slug: 'vodeni-zig', description: 'Dodaj tekst na sliku.', icon: '💧', href: 'tools/vodeni-zig.html' },
-  { name: 'Zamućivanje pozadine', slug: 'zamucivanje-pozadine', description: 'Dodaj efekt zamućenja pozadine.', icon: '🌫️', href: 'tools/zamucivanje-pozadine.html' }
+  { name: 'Zamućivanje pozadine', slug: 'zamucivanje-pozadine', description: 'Dodaj efekt zamućenja pozadine.', icon: '🌫️', href: 'tools/zamucivanje-pozadine.html' },
+  { name: 'Downloader', slug: 'downloader', description: 'Preuzmi datoteke s webu - URL, tekst, Base64.', icon: '⬇️', href: 'tools/downloader.html' }
 ];
 
 const grid = document.getElementById('toolGrid');
