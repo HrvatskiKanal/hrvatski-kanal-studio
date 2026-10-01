@@ -4,21 +4,23 @@ Besplatni lokalni web alati za obradu slika, teksta, PDF-a, preuzimanja i transk
 
 ## Alati (15)
 
-1. **Brisanje pozadine** — uklanjanje jednobojne pozadine
-2. **Konverter slika** — PNG, JPG i WebP
-3. **Brojač teksta** — riječi, znakovi i rečenice
-4. **Čitač teksta** — tekst u govor preko browsera
-5. **Paleta boja** — dominantne boje iz slike
-6. **QR kod generator** — QR kod za tekst ili poveznicu
-7. **Optimizacija slika** — promjena dimenzija i kvalitete
-8. **Slike u PDF** — više slika u jedan PDF
+1. **CupoBot** — hrvatski istraživački alat
+2. **Downloader** — URL, tekst i Base64 u datoteku
+3. **Vodeni žig** — tekstualni žig na slici
+4. **Paleta boja** — dominantne boje iz slike
+5. **Slike u PDF** — više slika u jedan PDF
+6. **Čitač teksta** — tekst u govor preko browsera
+7. **Brojač teksta** — riječi, znakovi i rečenice
+8. **Okvir i sjena** — okvir i sjena na fotografiji
 9. **Spajanje slika** — kolaž od više slika
-10. **Okvir i sjena** — okvir i sjena na fotografiji
-11. **Vodeni žig** — tekstualni žig na slici
-12. **Zamućivanje slike** — efekt zamućenja na cijeloj slici
-13. **Downloader** — URL, tekst i Base64 u datoteku
-14. **Transkriptor audio i videa** — lokalni Whisper za datoteke i Web Speech API za mikrofon
-15. **CupoBot** — neovisni hrvatski istraživački mozak pozvan kao Studio alat; javne akcije i objave zahtijevaju odobrenje
+10. **Konverter slika** — PNG, JPG i WebP
+11. **QR kod generator** — QR kod za tekst ili poveznicu
+12. **Brisanje pozadine** — uklanjanje jednobojne pozadine
+13. **Zamućivanje slike** — efekt zamućenja na cijeloj slici
+14. **Optimizacija slika** — promjena dimenzija i kvalitete
+15. **Transkriptor audio i videa** — lokalni Whisper i Web Speech API za mikrofon
+
+Redoslijed je namjerno složen od kraćeg prema dužem nazivu alata radi vizualne urednosti. Opisi ostaju kratki i odvojeni od naziva alata.
 
 ## Pokretanje
 
