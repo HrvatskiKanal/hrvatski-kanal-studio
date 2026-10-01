@@ -11,7 +11,7 @@ const tools = [
   { name: 'Okvir i sjena', slug: 'okvir-i-sjena', description: 'Dodaj okvir, sjenu i stil.', icon: '🖼️', href: 'tools/okvir-i-sjena.html' },
   { name: 'Vodeni žig', slug: 'vodeni-zig', description: 'Dodaj tekst na sliku.', icon: '💧', href: 'tools/vodeni-zig.html' },
   { name: 'Zamućivanje slike', slug: 'zamucivanje-pozadine', description: 'Dodaj efekt zamućenja cijeloj slici.', icon: '🌫️', href: 'tools/zamucivanje-pozadine.html' },
-  { name: 'Downloader', slug: 'downloader', description: 'Preuzmi datoteke s webu - URL, tekst, Base64.', icon: '⬇️', href: 'tools/downloader.html' },
+  { name: 'Video downloader', slug: 'downloader', description: 'Besplatno preuzmi javni video ili samo zvuk; otvara kompatibilni downloader stanice.', icon: '⬇️', href: 'https://hrvatskikanal.com/preuzimanje-videa' },
   { name: 'Transkriptor audio i videa', slug: 'transkriptor', description: 'Pretvori govor iz audio/video datoteke ili mikrofona u tekst.', icon: '🎙️', href: 'tools/transkriptor.html' }
 ];
 
