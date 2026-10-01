@@ -117,6 +117,36 @@ async function qrTask(task) {
   await new Promise((resolve, reject) => QRCode.toCanvas(canvas, value, { width: 600, margin: 3 }, (error) => error ? reject(error) : resolve()));
   publish(canvas.toDataURL('image/png'), 'cupo-qr-kod.png', 'QR kod generator', 'QR kod je generiran.');
 }
+async function mergeTask() {
+  if (selectedFiles.length < 2) throw new Error('Za kolaž učitajte najmanje dvije slike.');
+  const images = await Promise.all(selectedFiles.slice(0, 4).map(loadImage));
+  const cols = Math.min(2, images.length); const rows = Math.ceil(images.length / cols);
+  const canvas = document.createElement('canvas'); canvas.width = cols * 720; canvas.height = rows * 520;
+  const ctx = canvas.getContext('2d'); ctx.fillStyle = '#0b1120'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  images.forEach((image, index) => { const x = (index % cols) * 720; const y = Math.floor(index / cols) * 520; const ratio = Math.min(640 / image.naturalWidth, 440 / image.naturalHeight); const w = image.naturalWidth * ratio; const h = image.naturalHeight * ratio; ctx.drawImage(image, x + 40 + (640-w)/2, y + 40 + (440-h)/2, w, h); });
+  publish(canvas.toDataURL('image/png'), 'cupo-kolaz.png', 'Spajanje slika', 'Spojio sam slike u kolaž.');
+}
+async function pdfTask() {
+  if (!selectedFiles.length) throw new Error('Za PDF učitajte najmanje jednu sliku.');
+  if (!window.jspdf?.jsPDF) throw new Error('PDF modul nije učitan.');
+  const { jsPDF } = window.jspdf; const pdf = new jsPDF();
+  for (let index = 0; index < selectedFiles.length; index += 1) {
+    const image = await loadImage(selectedFiles[index]); const data = drawImage(image, 1600).toDataURL('image/jpeg', 0.92);
+    const pageWidth = pdf.internal.pageSize.getWidth(); const pageHeight = pdf.internal.pageSize.getHeight(); const ratio = Math.min(pageWidth / image.naturalWidth, pageHeight / image.naturalHeight); const w = image.naturalWidth * ratio; const h = image.naturalHeight * ratio;
+    if (index) pdf.addPage(); pdf.addImage(data, 'JPEG', (pageWidth-w)/2, (pageHeight-h)/2, w, h);
+  }
+  publish(pdf.output('datauristring'), 'cupo-slike.pdf', 'Slike u PDF', 'Pretvorio sam slike u PDF.');
+}
+function downloadTask(task) {
+  const url = task.match(/https?:\/\/\S+/i)?.[0];
+  if (!url) throw new Error('Za Downloader navedite HTTP ili HTTPS URL.');
+  const link = document.createElement('a'); link.href = url; link.download = ''; link.target = '_blank'; link.rel = 'noopener'; link.click();
+  say('Downloader', 'Pokrenuo sam preuzimanje zadanog URL-a.');
+}
+function transcriberTask() {
+  say('Transkriptor audio i videa', 'Otvaram naš lokalni Whisper/Web Speech alat. Odaberite audio ili video datoteku za transkripciju.');
+  setTimeout(() => { window.location.href = './transkriptor.html'; }, 250);
+}
 function textTask(task) {
   const text = task.replace(/^(prebroj|izbroji|broj riječi|brojac tekst[a]?|čitaj|procitaj)\s*[:=-]?/i, '').trim();
   const words = text ? text.split(/\s+/).length : 0; const chars = text.length; const sentences = text ? (text.match(/[.!?]+(?=\s|$)/g) || []).length : 0;
@@ -129,6 +159,10 @@ async function runAgentTool() {
   askBtn.disabled = true; status.textContent = 'CupoBot analizira zadatak i bira naš alat…';
   try {
     if (n.includes('qr') || n.includes('qrcode')) await qrTask(task);
+    else if (n.includes('pdf') && selectedFiles.length) await pdfTask();
+    else if ((n.includes('spoji') || n.includes('kolaz')) && selectedFiles.length) await mergeTask();
+    else if ((n.includes('download') || n.includes('preuzmi')) && /https?:\/\//i.test(task)) downloadTask(task);
+    else if (n.includes('transkript') || n.includes('whisper') || n.includes('audio') || n.includes('video')) transcriberTask();
     else if (n.includes('broj rijec') || n.includes('brojac')) textTask(task);
     else if (n.includes('citaj tekst') || n.includes('procitaj')) textTask(task);
     else if (selectedFiles.length && await imageTask(task)) {}
