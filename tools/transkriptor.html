@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transkriptor audio i videa</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .mode-tabs { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .mode-tab { border:1px solid var(--panel-border); background:rgba(96,165,250,.06); color:var(--text); border-radius:10px; padding:10px 14px; cursor:pointer; font:inherit; font-weight:700; }
+    .mode-tab.active { background:rgba(96,165,250,.25); border-color:var(--primary); }
+    .status { margin-top:14px; padding:12px 14px; border-radius:10px; background:rgba(96,165,250,.08); border:1px solid rgba(96,165,250,.35); color:var(--muted); white-space:pre-wrap; }
+    .status.error { background:rgba(248,113,113,.1); border-color:rgba(248,113,113,.45); color:#fecaca; }
+    .transcript-output { min-height:220px; margin-top:18px; }
+    .progress { width:100%; height:8px; margin-top:14px; accent-color:var(--primary); }
+    .hint { font-size:.9rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="tool-page">
+    <div class="tool-topbar"><a href="../index.html">← Natrag</a><span>Transkriptor</span></div>
+    <div class="tool-body">
+      <h1>Transkriptor audio i videa</h1>
+      <p>Pretvori govor u tekst. Obrada se odvija u browseru; nema plaćenog API-ja i sadržaj se ne šalje na naš poslužitelj.</p>
+      <div class="mode-tabs" role="tablist" aria-label="Način transkripcije">
+        <button class="mode-tab active" data-mode="file" type="button">Audio/video datoteka</button>
+        <button class="mode-tab" data-mode="mic" type="button">Mikrofon uživo</button>
+      </div>
+      <section id="filePanel" class="tool-box">
+        <label class="btn btn-primary" style="display:inline-flex;width:max-content;cursor:pointer;">
+          <input id="fileInput" type="file" accept="audio/*,video/*" />
+          Odaberi audio ili video
+        </label>
+        <div id="fileName" class="hint" style="margin-top:12px;">Nije odabrana datoteka.</div>
+        <div class="row">
+          <label for="language">Jezik:</label>
+          <select id="language" style="max-width:240px;">
+            <option value="croatian">Hrvatski</option>
+            <option value="english">Engleski</option>
+            <option value="serbian">Srpski</option>
+            <option value="bosnian">Bosanski</option>
+          </select>
+          <button id="transcribeBtn" class="btn btn-primary" type="button" disabled>Transkribiraj</button>
+        </div>
+        <progress id="progress" class="progress" value="0" max="100" hidden></progress>
+        <div class="hint" style="margin-top:10px;">Prvi put browser preuzima mali besplatni Whisper model. Nakon toga može se koristiti ponovno iz cachea.</div>
+      </section>
+      <section id="micPanel" class="tool-box" hidden>
+        <p class="hint">Ovaj način koristi ugrađeni Web Speech API preglednika. Za najbolji rezultat koristi Chrome ili Edge.</p>
+        <div class="row"><button id="startMicBtn" class="btn btn-primary" type="button">Započni snimanje</button><button id="stopMicBtn" class="btn btn-secondary" type="button" disabled>Zaustavi</button></div>
+      </section>
+      <div id="status" class="status" role="status">Spremno.</div>
+      <textarea id="transcript" class="transcript-output" placeholder="Transkript će se pojaviti ovdje..."></textarea>
+      <div class="row"><button id="copyBtn" class="btn btn-secondary" type="button">Kopiraj tekst</button><button id="downloadBtn" class="btn btn-success" type="button">Preuzmi TXT</button></div>
+    </div>
+  </div>
+  <script type="module">
+    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2';
+    env.allowLocalModels = false;
+    env.useBrowserCache = true;
+
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const transcribeBtn = document.getElementById('transcribeBtn');
+    const language = document.getElementById('language');
+    const progress = document.getElementById('progress');
+    const status = document.getElementById('status');
+    const transcript = document.getElementById('transcript');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const filePanel = document.getElementById('filePanel');
+    const micPanel = document.getElementById('micPanel');
+    let selectedFile = null;
+    let transcriber = null;
+    let recognition = null;
+    let finalMicText = '';
+
+    function setStatus(message, isError = false) {
+      status.textContent = message;
+      status.classList.toggle('error', isError);
+    }
+
+    fileInput.addEventListener('change', () => {
+      selectedFile = fileInput.files[0] || null;
+      fileName.textContent = selectedFile ? `${selectedFile.name} (${(selectedFile.size / 1024 / 1024).toFixed(1)} MB)` : 'Nije odabrana datoteka.';
+      transcribeBtn.disabled = !selectedFile;
+      setStatus(selectedFile ? 'Datoteka je spremna za transkripciju.' : 'Spremno.');
+    });
+
+    async function decodeToMono16k(arrayBuffer) {
+      const audioContext = new AudioContext();
+      const decoded = await audioContext.decodeAudioData(arrayBuffer);
+      const targetLength = Math.ceil(decoded.duration * 16000);
+      const offline = new OfflineAudioContext(1, targetLength, 16000);
+      const source = offline.createBufferSource();
+      source.buffer = decoded;
+      source.connect(offline.destination);
+      source.start();
+      const rendered = await offline.startRendering();
+      await audioContext.close();
+      return rendered.getChannelData(0);
+    }
+
+    async function toMono16k(file) {
+      if (!file.type.startsWith('video/')) return decodeToMono16k(await file.arrayBuffer());
+      if (!HTMLVideoElement.prototype.captureStream) {
+        throw new Error('Ovaj browser ne podržava izvlačenje audija iz videa. Otvori video u Chromeu ili Edgeu.');
+      }
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(file);
+      video.preload = 'auto';
+      video.muted = true;
+      await new Promise((resolve, reject) => {
+        video.onloadedmetadata = resolve;
+        video.onerror = () => reject(new Error('Video se ne može učitati.'));
+      });
+      const stream = video.captureStream();
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks.length) throw new Error('Video nema audio zapis.');
+      const audioStream = new MediaStream(audioTracks);
+      const recorder = MediaRecorder.isTypeSupported('audio/webm')
+        ? new MediaRecorder(audioStream, { mimeType: 'audio/webm' })
+        : new MediaRecorder(audioStream);
+      const chunks = [];
+      recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+      const recordingDone = new Promise((resolve, reject) => {
+        recorder.onstop = resolve;
+        recorder.onerror = () => reject(new Error('Čitanje audio zapisa iz videa nije uspjelo.'));
+      });
+      recorder.start();
+      video.onended = () => recorder.stop();
+      await video.play();
+      await recordingDone;
+      video.remove();
+      URL.revokeObjectURL(video.src);
+      return decodeToMono16k(await new Blob(chunks, { type: 'audio/webm' }).arrayBuffer());
+    }
+
+    transcribeBtn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+      transcribeBtn.disabled = true;
+      progress.hidden = false;
+      progress.value = 2;
+      try {
+        setStatus('Učitavam lokalni Whisper model… prvi put može potrajati.');
+        if (!transcriber) {
+          transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
+            device: 'wasm', dtype: 'q8',
+            progress_callback: data => { if (data.progress) progress.value = Math.max(2, Math.min(95, data.progress)); }
+          });
+        }
+        setStatus('Čitam audio zapis iz datoteke…');
+        const audio = await toMono16k(selectedFile);
+        const result = await transcriber(audio, {
+          chunk_length_s: 30, stride_length_s: 5,
+          language: language.value, task: 'transcribe'
+        });
+        transcript.value = result.text.trim();
+        progress.value = 100;
+        setStatus('Transkripcija završena.');
+      } catch (error) {
+        setStatus(`Transkripcija nije uspjela: ${error.message || error}. Za video pokušaj MP4/WebM s audio zapisom ili koristi Mikrofon uživo.`, true);
+      } finally { transcribeBtn.disabled = !selectedFile; }
+    });
+
+    document.querySelectorAll('.mode-tab').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('.mode-tab').forEach(tab => tab.classList.remove('active'));
+      button.classList.add('active');
+      const isFile = button.dataset.mode === 'file';
+      filePanel.hidden = !isFile; micPanel.hidden = isFile;
+      setStatus(isFile ? 'Spremno za audio/video datoteku.' : 'Spremno za mikrofon.');
+    }));
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const startMicBtn = document.getElementById('startMicBtn');
+    const stopMicBtn = document.getElementById('stopMicBtn');
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition(); recognition.lang = 'hr-HR'; recognition.continuous = true; recognition.interimResults = true;
+      recognition.onstart = () => { startMicBtn.disabled = true; stopMicBtn.disabled = false; setStatus('Slušam mikrofon…'); };
+      recognition.onresult = event => { let interim = ''; for (let i = event.resultIndex; i < event.results.length; i++) { const text = event.results[i][0].transcript; if (event.results[i].isFinal) finalMicText += `${text} `; else interim += text; } transcript.value = `${finalMicText}${interim}`.trim(); };
+      recognition.onerror = event => setStatus(`Mikrofon: ${event.error}`, true);
+      recognition.onend = () => { startMicBtn.disabled = false; stopMicBtn.disabled = true; if (finalMicText) setStatus('Diktiranje završeno.'); };
+      startMicBtn.onclick = () => { finalMicText = ''; transcript.value = ''; recognition.start(); };
+      stopMicBtn.onclick = () => recognition.stop();
+    } else {
+      startMicBtn.disabled = true; stopMicBtn.disabled = true; setStatus('Ovaj browser ne podržava Web Speech API. Za datoteke koristi transkripciju preko lokalnog Whisper modela.', true);
+    }
+
+    copyBtn.onclick = async () => { if (!transcript.value) return; await navigator.clipboard.writeText(transcript.value); setStatus('Tekst je kopiran.'); };
+    downloadBtn.onclick = () => { const blob = new Blob([transcript.value], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'transkript.txt'; a.click(); URL.revokeObjectURL(url); };
+  </script>
+</body>
+</html>

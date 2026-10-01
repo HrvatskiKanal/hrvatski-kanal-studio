@@ -3,97 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spajanje slika</title>
+  <title>Okvir i sjena</title>
   <link rel="stylesheet" href="../styles.css" />
-  <style>
-    .canvas-wrap { display: flex; justify-content: center; margin-top: 18px; overflow-x: auto; }
-    canvas { max-width: 100%; border-radius: 16px; background: #0b1120; }
-  </style>
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>Spajanje slika</span>
+      <span>Okvir i sjena</span>
     </div>
     <div class="tool-body">
-      <h1>Spajanje slika</h1>
-      <p>Učitaj 2–4 slike i spoji ih u kolaž.</p>
+      <h1>Okvir i sjena</h1>
+      <p>Dodaj okvir, sjenu i stiliziraj fotografiju.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" multiple />
-          Učitaj slike
+          <input id="fileInput" type="file" accept="image/*" />
+          Učitaj sliku
         </label>
         <div class="row">
-          <button id="mergeBtn" class="btn btn-primary" type="button">Spoji</button>
+          <label>Debljina okvira (px):</label>
+          <input id="frameSize" type="range" min="0" max="60" value="20" />
+          <span id="frameSizeValue" style="min-width:40px; font-weight:600;">20</span>
+        </div>
+        <div class="row">
+          <label>Boja okvira:</label>
+          <input id="frameColor" type="color" value="#ffffff" />
+        </div>
+        <div class="row">
+          <button id="applyBtn" class="btn btn-primary" type="button">Primijeni</button>
           <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
         </div>
       </div>
 
-      <div class="canvas-wrap">
-        <canvas id="canvas" width="800" height="600"></canvas>
+      <div class="tool-box" style="margin-top:16px; display:flex; justify-content:center; overflow-x:auto;">
+        <canvas id="canvas" width="700" height="500" style="border-radius:12px;"></canvas>
       </div>
     </div>
   </div>
 
   <script>
     const fileInput = document.getElementById('fileInput');
-    const mergeBtn = document.getElementById('mergeBtn');
+    const frameSize = document.getElementById('frameSize');
+    const frameSizeValue = document.getElementById('frameSizeValue');
+    const frameColor = document.getElementById('frameColor');
+    const applyBtn = document.getElementById('applyBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    let images = [];
+    let sourceImage = null;
 
-    fileInput.addEventListener('change', (event) => {
-      images = [];
-      const files = Array.from(event.target.files || []);
-      if (files.length === 0) return;
-
-      let loadedCount = 0;
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            images.push(img);
-            loadedCount += 1;
-            if (loadedCount === files.length) {
-              mergeBtn.disabled = false;
-            }
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
+    frameSize.addEventListener('input', () => {
+      frameSizeValue.textContent = frameSize.value;
     });
 
-    mergeBtn.addEventListener('click', () => {
-      if (images.length === 0) return;
-      const cols = Math.min(2, images.length);
-      const rows = Math.ceil(images.length / cols);
-      canvas.width = cols * 360;
-      canvas.height = rows * 260;
-      ctx.fillStyle = '#0b1120';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          sourceImage = img;
+          applyBtn.click();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
-      images.forEach((img, index) => {
-        const x = (index % cols) * 360;
-        const y = Math.floor(index / cols) * 260;
-        const ratio = Math.min(320 / img.width, 220 / img.height);
-        const w = img.width * ratio;
-        const h = img.height * ratio;
-        const centerX = x + 20 + (320 - w) / 2;
-        const centerY = y + 20 + (220 - h) / 2;
-        ctx.drawImage(img, centerX, centerY, w, h);
-      });
-
+    applyBtn.addEventListener('click', () => {
+      if (!sourceImage) return;
+      const borderSize = Number(frameSize.value);
+      const borderColor = frameColor.value;
+      const output = document.createElement('canvas');
+      output.width = sourceImage.width + borderSize * 2;
+      output.height = sourceImage.height + borderSize * 2;
+      const octx = output.getContext('2d');
+      octx.fillStyle = borderColor;
+      octx.fillRect(0, 0, output.width, output.height);
+      octx.shadowColor = 'rgba(0,0,0,0.35)';
+      octx.shadowBlur = 28;
+      octx.drawImage(sourceImage, borderSize, borderSize, sourceImage.width, sourceImage.height);
+      octx.shadowBlur = 0;
+      canvas.width = output.width;
+      canvas.height = output.height;
+      ctx.drawImage(output, 0, 0);
       downloadBtn.disabled = false;
     });
 
     downloadBtn.addEventListener('click', () => {
       const a = document.createElement('a');
-      a.download = 'kolaž.png';
+      a.download = 'okvir-i-sjena.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
     });

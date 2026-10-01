@@ -1,30 +1,28 @@
 # Hrvatski Kanal Studio
 
-Jednostavan web app sa svim alatima za obradu slika, teksta, PDF-a, preuzimanja i dodatnih malih alata.
+Besplatni lokalni web alati za obradu slika, teksta, PDF-a, preuzimanja i transkripciju govora. Datoteke se obrađuju u browseru; nema našeg backend poslužitelja ni plaćenih API-ja.
 
-## Struktura
+## Alati (14)
 
-- `index.html` - landing page s pregledom alata
-- `styles.css` - zajednički dizajn
-- `app.js` - navigacija i podaci o alatima
-- `tools/` - pojedinačne stranice alata
+1. **Brisanje pozadine** — uklanjanje jednobojne pozadine
+2. **Konverter slika** — PNG, JPG i WebP
+3. **Brojač teksta** — riječi, znakovi, rečenice i vrijeme čitanja
+4. **Čitač teksta** — tekst u govor preko browsera
+5. **Paleta boja** — dominantne boje iz slike
+6. **QR kod generator** — QR kod za tekst ili poveznicu
+7. **Optimizacija slika** — promjena dimenzija i kvalitete
+8. **Slike u PDF** — više slika u jedan PDF
+9. **Spajanje slika** — kolaž od više slika
+10. **Okvir i sjena** — okvir i sjena na fotografiji
+11. **Vodeni žig** — tekstualni žig na slici
+12. **Zamućivanje pozadine** — fokusirani subjekt i zamućena pozadina
+13. **Downloader** — URL, tekst i Base64 u datoteku
+14. **Transkriptor audio i videa** — lokalni Whisper za datoteke i Web Speech API za mikrofon
 
-## Alati (13 članova)
+## Pokretanje
 
-1. **Brisanje pozadine** - Ukloni pozadinu sa slike
-2. **Konverter slika** - Pretvori JPG, PNG, WebP i GIF
-3. **Brojač teksta** - Broj slova, riječi i znakova
-4. **Čitač teksta** - Prebaci tekst u govor
-5. **Paleta boja** - Izvadi boje iz slike
-6. **QR kod generator** - Generiraj QR kod
-7. **Optimizacija slika** - Smanji veličinu ili kvalitetu
-8. **Slike u PDF** - Pretvori više slika u PDF
-9. **Spajanje slika** - Spoji više slika u kolaž
-10. **Okvir i sjena** - Dodaj okvir, sjenu i stil
-11. **Vodeni žig** - Dodaj tekst na sliku
-12. **Zamućivanje pozadine** - Dodaj efekt zamućenja
-13. **Downloader** - Preuzmi datoteke s webu
+```bash
+python3 -m http.server 8000
+```
 
-## Napomena
-
-Svi alati su dizajnirani kao lokalni browser-based alati, bez plaćenih API-jev i bez dodatnih komplikacija.
+QR, PDF i transkriptor koriste besplatne CDN biblioteke samo u browseru. Transkriptor pri prvom korištenju preuzima besplatni Whisper model u cache; audio se obrađuje lokalno i ne šalje se na naš server. Za mikrofon je potreban browser s Web Speech API podrškom.

@@ -3,37 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brojač teksta</title>
+  <title>Čitač teksta</title>
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>Brojač teksta</span>
+      <span>Čitač teksta</span>
     </div>
     <div class="tool-body">
-      <h1>Brojač teksta</h1>
-      <p>Provjeri broj znakova, riječi i rečenica.</p>
+      <h1>Čitač teksta</h1>
+      <p>Prebaci tekst u govor direktno u browseru.</p>
 
       <div class="tool-box">
         <textarea id="textInput" placeholder="Upiši tekst ovdje..."></textarea>
         <div class="row">
-          <button id="countBtn" class="btn btn-primary" type="button">Izračunaj</button>
-        </div>
-        <div class="row" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));">
-          <div class="panel" style="padding:12px; border-radius:12px;">
-            <div class="label" style="font-size:0.72rem;">Riječi</div>
-            <div id="wordCount" style="font-size:1.8rem; font-weight:800;">0</div>
-          </div>
-          <div class="panel" style="padding:12px; border-radius:12px;">
-            <div class="label" style="font-size:0.72rem;">Znakovi</div>
-            <div id="charCount" style="font-size:1.8rem; font-weight:800;">0</div>
-          </div>
-          <div class="panel" style="padding:12px; border-radius:12px;">
-            <div class="label" style="font-size:0.72rem;">Rečenice</div>
-            <div id="sentenceCount" style="font-size:1.8rem; font-weight:800;">0</div>
-          </div>
+          <button id="speakBtn" class="btn btn-primary" type="button">Reci</button>
+          <button id="stopBtn" class="btn btn-secondary" type="button">Zaustavi</button>
         </div>
       </div>
     </div>
@@ -41,21 +28,25 @@
 
   <script>
     const textInput = document.getElementById('textInput');
-    const countBtn = document.getElementById('countBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const stopBtn = document.getElementById('stopBtn');
 
-    function updateCounts() {
+    speakBtn.addEventListener('click', () => {
       const text = textInput.value.trim();
-      const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-      const chars = text.length;
-      const sentences = text ? text.split(/[.!?]+/).filter(Boolean).length : 0;
+      if (!text) return;
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'hr-HR';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      }
+    });
 
-      document.getElementById('wordCount').textContent = words;
-      document.getElementById('charCount').textContent = chars;
-      document.getElementById('sentenceCount').textContent = sentences;
-    }
-
-    countBtn.addEventListener('click', updateCounts);
-    textInput.addEventListener('input', updateCounts);
+    stopBtn.addEventListener('click', () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    });
   </script>
 </body>
 </html>
