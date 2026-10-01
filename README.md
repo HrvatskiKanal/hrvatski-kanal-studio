@@ -16,6 +16,10 @@ Ovaj repozitorij je **kanonski dom za browser-lokalne alate** i početna točka 
 
 Novi lokalni alat pripada ovdje, u `tools/`. Alati kojima stvarno treba poslužitelj (npr. višestruki video downloader) ostaju odvojeni i moraju jasno navesti trošak CPU-a, prometa i hostinga.
 
+## HK Agent
+
+Studio uključuje mali **HK Agent** u donjem desnom kutu. To je besplatni browser-lokalni pomoćnik: prepoznaje pitanja o alatima i vodi korisnika izravno na odgovarajući alat. Ne koristi AI API, ne šalje razgovor na server i namjerno nije povezan s video downloaderom. Ako se kasnije doda pravi lokalni model, mora ostati opcionalan, vidljivo označen i bez automatskog troška.
+
 ## Alati (14)
 
 1. **Brisanje pozadine** — uklanjanje jednobojne pozadine

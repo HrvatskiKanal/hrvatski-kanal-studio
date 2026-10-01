@@ -3,6 +3,13 @@
   "organization": "HrvatskiKanal",
   "hubRepository": "HrvatskiKanal/hrvatski-kanal-studio",
   "purpose": "Canonical index for Hrvatski Kanal tools, repositories, checks, and operating boundaries.",
+  "agent": {
+    "name": "HK Agent",
+    "entrypoint": "hk-agent.js",
+    "kind": "browser-local-tool-guide",
+    "connectedTools": "All Studio browser tools except the video downloader",
+    "networkBoundary": "No AI API, no server chat, no conversation upload; future local-model additions must remain optional and cost-transparent."
+  },
   "repositories": [
     {
       "id": "qa-lab",
