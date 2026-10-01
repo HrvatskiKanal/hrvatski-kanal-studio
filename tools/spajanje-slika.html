@@ -8,6 +8,8 @@
   <style>
     .canvas-wrap { display: flex; justify-content: center; margin-top: 18px; overflow-x: auto; }
     canvas { max-width: 100%; border-radius: 16px; background: #0b1120; }
+    .status { min-height: 1.4em; margin-top: 12px; color: var(--muted); }
+    .status.error { color: #fecaca; }
   </style>
 </head>
 <body>
@@ -18,21 +20,22 @@
     </div>
     <div class="tool-body">
       <h1>Spajanje slika</h1>
-      <p>Učitaj 2–4 slike i spoji ih u kolaž.</p>
+      <p>Učitaj 2–4 slike i spoji ih u kolaž. Slike ostaju u odabranom redoslijedu.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" multiple />
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple />
           Učitaj slike
         </label>
+        <div id="status" class="status" role="status" aria-live="polite">Odaberi od 2 do 4 slike.</div>
         <div class="row">
-          <button id="mergeBtn" class="btn btn-primary" type="button">Spoji</button>
+          <button id="mergeBtn" class="btn btn-primary" type="button" disabled>Spoji</button>
           <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
         </div>
       </div>
 
       <div class="canvas-wrap">
-        <canvas id="canvas" width="800" height="600"></canvas>
+        <canvas id="canvas" width="800" height="600" aria-label="Pregled kolaža"></canvas>
       </div>
     </div>
   </div>
@@ -42,60 +45,91 @@
     const mergeBtn = document.getElementById('mergeBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
+    const status = document.getElementById('status');
     let images = [];
 
-    fileInput.addEventListener('change', (event) => {
-      images = [];
-      const files = Array.from(event.target.files || []);
-      if (files.length === 0) return;
+    function setStatus(message, isError = false) {
+      status.textContent = message;
+      status.classList.toggle('error', isError);
+    }
 
-      let loadedCount = 0;
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            images.push(img);
-            loadedCount += 1;
-            if (loadedCount === files.length) {
-              mergeBtn.disabled = false;
-            }
-          };
-          img.src = e.target.result;
+    function loadImage(file) {
+      return new Promise((resolve, reject) => {
+        const objectUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(image);
         };
-        reader.readAsDataURL(file);
+        image.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error(`${file.name} nije podržana slika.`));
+        };
+        image.src = objectUrl;
       });
+    }
+
+    fileInput.addEventListener('change', async () => {
+      const files = Array.from(fileInput.files || []);
+      images = [];
+      mergeBtn.disabled = true;
+      downloadBtn.disabled = true;
+      if (files.length < 2 || files.length > 4) {
+        setStatus('Odaberi najmanje 2, a najviše 4 slike.', true);
+        return;
+      }
+      setStatus('Učitavam slike…');
+      try {
+        images = await Promise.all(files.map(loadImage));
+        mergeBtn.disabled = false;
+        setStatus(`${images.length} slike su spremne; redoslijed je isti kao u odabiru.`);
+      } catch (error) {
+        images = [];
+        setStatus(error.message || 'Slike se ne mogu učitati.', true);
+      }
     });
 
     mergeBtn.addEventListener('click', () => {
-      if (images.length === 0) return;
-      const cols = Math.min(2, images.length);
-      const rows = Math.ceil(images.length / cols);
-      canvas.width = cols * 360;
-      canvas.height = rows * 260;
-      ctx.fillStyle = '#0b1120';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (images.length < 2) return;
+      const columns = images.length === 2 ? 2 : 2;
+      const rows = Math.ceil(images.length / columns);
+      const cellWidth = 720;
+      const cellHeight = 520;
+      const padding = 24;
+      canvas.width = columns * cellWidth;
+      canvas.height = rows * cellHeight;
+      context.fillStyle = '#0b1120';
+      context.fillRect(0, 0, canvas.width, canvas.height);
 
-      images.forEach((img, index) => {
-        const x = (index % cols) * 360;
-        const y = Math.floor(index / cols) * 260;
-        const ratio = Math.min(320 / img.width, 220 / img.height);
-        const w = img.width * ratio;
-        const h = img.height * ratio;
-        const centerX = x + 20 + (320 - w) / 2;
-        const centerY = y + 20 + (220 - h) / 2;
-        ctx.drawImage(img, centerX, centerY, w, h);
+      images.forEach((image, index) => {
+        const x = (index % columns) * cellWidth;
+        const y = Math.floor(index / columns) * cellHeight;
+        const maxWidth = cellWidth - padding * 2;
+        const maxHeight = cellHeight - padding * 2;
+        const scale = Math.min(maxWidth / image.naturalWidth, maxHeight / image.naturalHeight);
+        const width = Math.max(1, Math.round(image.naturalWidth * scale));
+        const height = Math.max(1, Math.round(image.naturalHeight * scale));
+        context.drawImage(image, x + (cellWidth - width) / 2, y + (cellHeight - height) / 2, width, height);
       });
 
       downloadBtn.disabled = false;
+      setStatus('Kolaž je spreman za preuzimanje.');
     });
 
     downloadBtn.addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.download = 'kolaž.png';
-      a.href = canvas.toDataURL('image/png');
-      a.click();
+      canvas.toBlob(blob => {
+        if (!blob) {
+          setStatus('Kolaž se ne može pripremiti za preuzimanje.', true);
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = 'kolaz.png';
+        link.href = url;
+        link.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }, 'image/png');
     });
   </script>
 </body>

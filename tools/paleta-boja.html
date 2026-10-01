@@ -7,9 +7,11 @@
   <link rel="stylesheet" href="../styles.css" />
   <style>
     .palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-top: 16px; }
-    .color-box { border-radius: 12px; overflow: hidden; border: 1px solid rgba(148,163,184,0.2); }
+    .color-box { overflow: hidden; padding: 0; border: 1px solid rgba(148,163,184,0.2); border-radius: 12px; background: rgba(148,163,184,.04); color: var(--text); cursor: pointer; }
+    .color-box:hover { border-color: rgba(96, 165, 250, .75); }
     .color-box .block { height: 120px; }
-    .color-box .code { padding: 10px; text-align: center; font-weight: 700; color: var(--text); }
+    .color-box .code { padding: 10px; text-align: center; font-weight: 700; }
+    .status { min-height: 1.4em; margin-top: 12px; color: var(--muted); }
   </style>
 </head>
 <body>
@@ -20,63 +22,125 @@
     </div>
     <div class="tool-body">
       <h1>Paleta boja</h1>
-      <p>Učitaj sliku i izvadi glavne boje.</p>
+      <p>Učitaj sliku i izdvoji šest najzastupljenijih boja. Klikni boju za kopiranje HEX koda.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" />
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
           Učitaj sliku
         </label>
+        <div id="status" class="status" role="status" aria-live="polite">Odaberi sliku.</div>
       </div>
 
-      <div id="palette" class="palette-grid"></div>
+      <div id="palette" class="palette-grid" aria-live="polite"></div>
     </div>
   </div>
 
   <script>
     const fileInput = document.getElementById('fileInput');
     const palette = document.getElementById('palette');
+    const status = document.getElementById('status');
 
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.width = 120;
-          canvas.height = 120;
-          ctx.drawImage(img, 0, 0, 120, 120);
-          const data = ctx.getImageData(0, 0, 120, 120).data;
-          const colors = [];
-          for (let i = 0; i < data.length; i += 64) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            if (r + g + b > 30) colors.push([r, g, b]);
+    function colorDistance(a, b) {
+      return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
+    }
+
+    function toHex([r, g, b]) {
+      return `#${[r, g, b].map(value => Math.round(value).toString(16).padStart(2, '0')).join('')}`.toUpperCase();
+    }
+
+    function extractDominantColors(image) {
+      const maxSide = 180;
+      const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      const buckets = new Map();
+
+      for (let index = 0; index < pixels.length; index += 16) {
+        const alpha = pixels[index + 3];
+        if (alpha < 180) continue;
+        const r = pixels[index];
+        const g = pixels[index + 1];
+        const b = pixels[index + 2];
+        const key = `${r >> 5}-${g >> 5}-${b >> 5}`;
+        const bucket = buckets.get(key) || { count: 0, r: 0, g: 0, b: 0 };
+        bucket.count += 1;
+        bucket.r += r;
+        bucket.g += g;
+        bucket.b += b;
+        buckets.set(key, bucket);
+      }
+
+      const candidates = [...buckets.values()]
+        .sort((a, b) => b.count - a.count)
+        .map(bucket => [bucket.r / bucket.count, bucket.g / bucket.count, bucket.b / bucket.count]);
+      const selected = [];
+      for (const color of candidates) {
+        if (selected.every(existing => colorDistance(existing, color) > 52)) selected.push(color);
+        if (selected.length === 6) break;
+      }
+      return selected;
+    }
+
+    function renderPalette(colors) {
+      palette.replaceChildren();
+      colors.forEach(color => {
+        const hex = toHex(color);
+        const box = document.createElement('button');
+        box.type = 'button';
+        box.className = 'color-box';
+        box.title = `Kopiraj ${hex}`;
+        box.setAttribute('aria-label', `Kopiraj boju ${hex}`);
+        const block = document.createElement('span');
+        block.className = 'block';
+        block.style.background = hex;
+        const code = document.createElement('span');
+        code.className = 'code';
+        code.textContent = hex;
+        box.append(block, code);
+        box.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(hex);
+            status.textContent = `${hex} je kopiran.`;
+          } catch (_) {
+            status.textContent = `Boja: ${hex}`;
           }
-          const unique = [];
-          const seen = new Set();
-          colors.slice(0, 8).forEach(([r, g, b]) => {
-            const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
-            if (!seen.has(hex)) {
-              seen.add(hex);
-              unique.push(hex);
-            }
-          });
-          palette.innerHTML = '';
-          unique.slice(0, 6).forEach(hex => {
-            const box = document.createElement('div');
-            box.className = 'color-box';
-            box.innerHTML = `<div class="block" style="background:${hex};"></div><div class="code">${hex}</div>`;
-            palette.appendChild(box);
-          });
-        };
-        img.src = e.target.result;
+        });
+        palette.appendChild(box);
+      });
+    }
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      palette.replaceChildren();
+      if (!file) {
+        status.textContent = 'Odaberi sliku.';
+        return;
+      }
+      status.textContent = 'Analiziram sliku lokalno u pregledniku…';
+      const objectUrl = URL.createObjectURL(file);
+      const image = new Image();
+      image.onload = () => {
+        try {
+          const colors = extractDominantColors(image);
+          if (!colors.length) throw new Error('Nema vidljivih piksela za analizu.');
+          renderPalette(colors);
+          status.textContent = `Pronađeno je ${colors.length} dominantnih boja.`;
+        } catch (error) {
+          status.textContent = `Analiza nije uspjela: ${error.message || error}`;
+        } finally {
+          URL.revokeObjectURL(objectUrl);
+        }
       };
-      reader.readAsDataURL(file);
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        status.textContent = 'Odabrana datoteka nije podržana slika.';
+      };
+      image.src = objectUrl;
     });
   </script>
 </body>

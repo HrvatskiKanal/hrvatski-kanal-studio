@@ -85,6 +85,15 @@
     const customColor = document.getElementById('customColor');
     let currentImage = null;
 
+    function renderSource(image, maxSide = 1600) {
+      const ratio = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+      const source = document.createElement('canvas');
+      source.width = Math.max(1, Math.round(image.naturalWidth * ratio));
+      source.height = Math.max(1, Math.round(image.naturalHeight * ratio));
+      source.getContext('2d').drawImage(image, 0, 0, source.width, source.height);
+      return source;
+    }
+
     fileInput.addEventListener('change', (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -103,13 +112,11 @@
 
     function drawPreview() {
       if (!currentImage) return;
-      const maxWidth = 900;
-      const maxHeight = 500;
-      const ratio = Math.min(maxWidth / currentImage.width, maxHeight / currentImage.height, 1);
-      canvas.width = Math.max(200, currentImage.width * ratio);
-      canvas.height = Math.max(200, currentImage.height * ratio);
+      const source = renderSource(currentImage, 1600);
+      canvas.width = source.width;
+      canvas.height = source.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(source, 0, 0);
     }
 
     function estimateBackground(data, width, height) {
@@ -128,12 +135,12 @@
       return sum.map(v => v / samples.length);
     }
 
-    function removeBackground(img) {
+    function removeBackground(source) {
       const temp = document.createElement('canvas');
-      temp.width = img.width;
-      temp.height = img.height;
+      temp.width = source.width;
+      temp.height = source.height;
       const tctx = temp.getContext('2d');
-      tctx.drawImage(img, 0, 0);
+      tctx.drawImage(source, 0, 0);
       const imageData = tctx.getImageData(0, 0, temp.width, temp.height);
       const data = imageData.data;
       const bg = estimateBackground(data, temp.width, temp.height);
@@ -185,16 +192,12 @@
 
     processBtn.addEventListener('click', () => {
       if (!currentImage) return;
-      const cleaned = removeBackground(currentImage);
+      const cleaned = removeBackground(renderSource(currentImage, 1600));
       const finalCanvas = fillBackground(cleaned);
-
-      const maxWidth = 900;
-      const maxHeight = 500;
-      const ratio = Math.min(maxWidth / finalCanvas.width, maxHeight / finalCanvas.height, 1);
-      canvas.width = Math.max(200, finalCanvas.width * ratio);
-      canvas.height = Math.max(200, finalCanvas.height * ratio);
+      canvas.width = finalCanvas.width;
+      canvas.height = finalCanvas.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(finalCanvas, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(finalCanvas, 0, 0);
       downloadBtn.disabled = false;
     });
 

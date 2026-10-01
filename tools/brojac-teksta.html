@@ -44,10 +44,11 @@
     const countBtn = document.getElementById('countBtn');
 
     function updateCounts() {
-      const text = textInput.value.trim();
+      const rawText = textInput.value;
+      const text = rawText.trim();
       const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-      const chars = text.length;
-      const sentences = text ? text.split(/[.!?]+/).filter(Boolean).length : 0;
+      const chars = [...rawText].length;
+      const sentences = text ? (text.match(/[^.!?]+(?:[.!?]+|$)/g) || []).length : 0;
 
       document.getElementById('wordCount').textContent = words;
       document.getElementById('charCount').textContent = chars;

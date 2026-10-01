@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Slike u PDF</title>
   <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .status { min-height: 1.4em; margin-top: 12px; color: var(--muted); }
+    .status.error { color: #fecaca; }
+  </style>
 </head>
 <body>
   <div class="tool-page">
@@ -14,15 +18,16 @@
     </div>
     <div class="tool-body">
       <h1>Slike u PDF</h1>
-      <p>Dodaj više slika i pretvori ih u PDF datoteku.</p>
+      <p>Dodaj više slika i pretvori ih u PDF datoteku. Slike se čitaju i obrađuju samo u pregledniku.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" multiple />
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple />
           Učitaj slike
         </label>
+        <div id="status" class="status" role="status" aria-live="polite">Odaberi jednu ili više slika.</div>
         <div class="row">
-          <button id="createPdfBtn" class="btn btn-primary" type="button">Napravi PDF</button>
+          <button id="createPdfBtn" class="btn btn-primary" type="button" disabled>Napravi PDF</button>
         </div>
       </div>
     </div>
@@ -32,47 +37,88 @@
   <script>
     const fileInput = document.getElementById('fileInput');
     const createPdfBtn = document.getElementById('createPdfBtn');
+    const status = document.getElementById('status');
     let images = [];
 
-    fileInput.addEventListener('change', (event) => {
-      images = Array.from(event.target.files || []);
+    function setStatus(message, isError = false) {
+      status.textContent = message;
+      status.classList.toggle('error', isError);
+    }
+
+    function loadImage(file) {
+      return new Promise((resolve, reject) => {
+        const objectUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(image);
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error(`${file.name} nije podržana slika.`));
+        };
+        image.src = objectUrl;
+      });
+    }
+
+    function imageToJpeg(image) {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0);
+      return canvas.toDataURL('image/jpeg', 0.92);
+    }
+
+    fileInput.addEventListener('change', async () => {
+      const files = Array.from(fileInput.files || []);
+      images = [];
+      createPdfBtn.disabled = true;
+      if (!files.length) {
+        setStatus('Odaberi jednu ili više slika.');
+        return;
+      }
+      setStatus('Učitavam slike…');
+      try {
+        images = await Promise.all(files.map(loadImage));
+        createPdfBtn.disabled = false;
+        setStatus(`${images.length} slika je spremno za PDF.`);
+      } catch (error) {
+        images = [];
+        setStatus(error.message || 'Slike se ne mogu učitati.', true);
+      }
     });
 
     createPdfBtn.addEventListener('click', () => {
-      if (!images.length) return;
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF();
-
-      const loadAndRender = (index) => {
-        if (index >= images.length) {
-          pdf.save('slike.pdf');
-          return;
-        }
-
-        const file = images[index];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const ratio = Math.min(pageWidth / img.width, pageHeight / img.height);
-            const w = img.width * ratio;
-            const h = img.height * ratio;
-            const x = (pageWidth - w) / 2;
-            const y = (pageHeight - h) / 2;
-            pdf.addImage(e.target.result, 'PNG', x, y, w, h);
-            if (index < images.length - 1) {
-              pdf.addPage();
-            }
-            loadAndRender(index + 1);
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      };
-
-      loadAndRender(0);
+      if (!images.length || !window.jspdf?.jsPDF) {
+        setStatus('PDF biblioteka ili slike nisu spremni.', true);
+        return;
+      }
+      createPdfBtn.disabled = true;
+      try {
+        const firstOrientation = images[0].naturalWidth > images[0].naturalHeight ? 'landscape' : 'portrait';
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: firstOrientation, unit: 'mm', format: 'a4', compress: true });
+        images.forEach((image, index) => {
+          const orientation = image.naturalWidth > image.naturalHeight ? 'landscape' : 'portrait';
+          if (index > 0) pdf.addPage('a4', orientation);
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const margin = 8;
+          const scale = Math.min((pageWidth - margin * 2) / image.naturalWidth, (pageHeight - margin * 2) / image.naturalHeight);
+          const width = image.naturalWidth * scale;
+          const height = image.naturalHeight * scale;
+          pdf.addImage(imageToJpeg(image), 'JPEG', (pageWidth - width) / 2, (pageHeight - height) / 2, width, height, undefined, 'FAST');
+        });
+        pdf.save('slike.pdf');
+        setStatus(images.length === 1 ? 'PDF s jednom slikom je pripremljen.' : `PDF s ${images.length} slike je pripremljen.`);
+      } catch (error) {
+        setStatus(`Izrada PDF-a nije uspjela: ${error.message || error}`, true);
+      } finally {
+        createPdfBtn.disabled = false;
+      }
     });
   </script>
 </body>

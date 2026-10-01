@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "organization": "HrvatskiKanal",
+  "hubRepository": "HrvatskiKanal/hrvatski-kanal-studio",
+  "purpose": "Canonical index for Hrvatski Kanal tools, repositories, checks, and operating boundaries.",
+  "repositories": [
+    {
+      "id": "studio",
+      "repository": "HrvatskiKanal/hrvatski-kanal-studio",
+      "role": "canonical-local-tool-lab",
+      "status": "active",
+      "entrypoint": "index.html",
+      "tests": ["npm test"],
+      "deployment": "GitHub Pages from repository root",
+      "networkBoundary": "No application backend, accounts, paid APIs, or CDN assets. Individual tools work locally in the browser; transcription first downloads its open model into the browser cache."
+    },
+    {
+      "id": "site",
+      "repository": "HrvatskiKanal/hrvatskikanal30.rujna",
+      "role": "integrated-main-site",
+      "status": "active",
+      "entrypoints": ["/vrijeme", "/ekonomija", "/preuzimanje-videa"],
+      "tests": ["npm run typecheck", "npm test"],
+      "deployment": "Node/TanStack server application",
+      "networkBoundary": "Live weather and market pages use public data sources. The video downloader requires a self-hosted server with locally installed yt-dlp and FFmpeg; it is not a GitHub Pages feature."
+    },
+    {
+      "id": "downloader-server",
+      "repository": "HrvatskiKanal/hk-video-downloader",
+      "role": "specialized-server-downloader",
+      "status": "active",
+      "entrypoint": "server.js",
+      "tests": ["npm test"],
+      "deployment": "Self-hosted Node.js server",
+      "networkBoundary": "Uses host CPU, temporary disk, and bandwidth. No paid API is required, but public hosting is not inherently cost-free."
+    },
+    {
+      "id": "legacy-site-export-1",
+      "repository": "HrvatskiKanal/hrvatskikanal",
+      "role": "legacy-or-review-copy",
+      "status": "do-not-add-new-tools",
+      "action": "Confirm current deployment ownership before editing or archiving."
+    },
+    {
+      "id": "legacy-site-export-2",
+      "repository": "HrvatskiKanal/hrvatskikanal.com",
+      "role": "legacy-or-review-copy",
+      "status": "do-not-add-new-tools",
+      "action": "Confirm current deployment ownership before editing or archiving."
+    },
+    {
+      "id": "legacy-site-export-3",
+      "repository": "HrvatskiKanal/timber-plum-earth-sapphire",
+      "role": "legacy-or-review-copy",
+      "status": "do-not-add-new-tools",
+      "action": "Confirm current deployment ownership before editing or archiving."
+    }
+  ],
+  "tools": [
+    { "id": "brisanje-pozadine", "name": "Brisanje pozadine", "path": "tools/brisanje-pozadine.html", "kind": "local-browser" },
+    { "id": "konverter-slika", "name": "Konverter slika", "path": "tools/konverter-slika.html", "kind": "local-browser" },
+    { "id": "brojac-teksta", "name": "Brojač teksta", "path": "tools/brojac-teksta.html", "kind": "local-browser" },
+    { "id": "citac-teksta", "name": "Čitač teksta", "path": "tools/citac-teksta.html", "kind": "browser-api" },
+    { "id": "paleta-boja", "name": "Paleta boja", "path": "tools/paleta-boja.html", "kind": "local-browser" },
+    { "id": "qr-kod-generator", "name": "QR kod generator", "path": "tools/qr-kod-generator.html", "kind": "local-browser" },
+    { "id": "optimizacija-slika", "name": "Optimizacija slika", "path": "tools/optimizacija-slika.html", "kind": "local-browser" },
+    { "id": "slike-u-pdf", "name": "Slike u PDF", "path": "tools/slike-u-pdf.html", "kind": "local-browser" },
+    { "id": "spajanje-slika", "name": "Spajanje slika", "path": "tools/spajanje-slika.html", "kind": "local-browser" },
+    { "id": "okvir-i-sjena", "name": "Okvir i sjena", "path": "tools/okvir-i-sjena.html", "kind": "local-browser" },
+    { "id": "vodeni-zig", "name": "Vodeni žig", "path": "tools/vodeni-zig.html", "kind": "local-browser" },
+    { "id": "zamucivanje-slike", "name": "Zamućivanje slike", "path": "tools/zamucivanje-pozadine.html", "kind": "local-browser" },
+    { "id": "downloader", "name": "Downloader", "path": "tools/downloader.html", "kind": "local-browser", "scope": "Direct files, text, and Base64 only; does not bypass platform protections." },
+    { "id": "transkriptor", "name": "Transkriptor audio i videa", "path": "tools/transkriptor.html", "kind": "browser-api-and-local-model", "scope": "Audio/video stays in the browser; first file transcription obtains an open model for browser cache." }
+  ],
+  "agentRules": [
+    "Read this file and AGENTS.md before adding or moving a tool.",
+    "Add browser-only utilities to the Studio unless a server is technically required.",
+    "Do not claim a server-side feature is free or works on GitHub Pages without a documented, verifiable deployment path.",
+    "Update this registry, README, and tests in the same pull request whenever the tool inventory changes.",
+    "Do not edit or create new tools in a legacy-or-review-copy repository."
+  ]
+}

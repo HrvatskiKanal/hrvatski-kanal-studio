@@ -7,9 +7,12 @@
   <link rel="stylesheet" href="../styles.css" />
   <style>
     .download-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
-    .method-btn { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--panel-border); background: rgba(96, 165, 250, 0.05); cursor: pointer; text-align: center; font-weight: 600; }
+    .method-btn { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--panel-border); background: rgba(96, 165, 250, 0.05); color: var(--text); cursor: pointer; text-align: center; font-weight: 600; }
     .method-btn.active { background: rgba(96, 165, 250, 0.25); border-color: #60a5fa; }
     .info-box { margin-top: 14px; padding: 12px; border-radius: 10px; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.4); color: #bbf7d0; font-size: 0.9rem; }
+    .info-box.error { background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.45); color: #fecaca; }
+    .info-box a { color: inherit; font-weight: 700; }
+    .platform-hint { margin-top: 10px; color: #fde68a; font-size: 0.9rem; line-height: 1.45; }
   </style>
 </head>
 <body>
@@ -20,47 +23,48 @@
     </div>
     <div class="tool-body">
       <h1>Downloader</h1>
-      <p>Video downloader stanice radi na posebnoj stranici i podržava kvalitetu, video sa zvukom, samo video i samo zvuk.</p>
-      <div class="info-box" style="display:block;">
-        <strong>Video preuzimanje:</strong> <a href="https://hrvatskikanal.com/preuzimanje-videa" target="_blank" rel="noopener noreferrer">Otvori službeni Hrvatski Kanal downloader</a>.
-        Ovaj Studio alat ostaje lokalni alat za datoteke, tekst i Base64 — ništa se ne šalje na našu stranicu.
+      <p>Preuzmi datoteku s dopuštenog URL-a ili lokalno izradi datoteku od teksta i Base64 sadržaja.</p>
+      <div class="info-box">
+        <strong>Bez naplate i bez posredničkog servisa:</strong> tekst i Base64 obrađuju se isključivo u pregledniku. Za URL se preglednik izravno spaja na odabranu stranicu; ne šaljemo URL, kolačiće ni datoteke na Hrvatski Kanal. Neki izvori blokiraju izravno preuzimanje zbog CORS pravila — alat to jasno javlja, bez plaćenog proxyja.
       </div>
 
       <div class="tool-box">
         <div class="row">
           <label>Tip preuzimanja:</label>
-          <div class="download-methods">
-            <button class="method-btn active" data-method="url">URL → Datoteka</button>
-            <button class="method-btn" data-method="text">Tekst → Datoteka</button>
-            <button class="method-btn" data-method="base64">Base64 → Datoteka</button>
+          <div class="download-methods" role="tablist" aria-label="Tip preuzimanja">
+            <button class="method-btn active" data-method="url" type="button" role="tab" aria-selected="true">URL → Datoteka</button>
+            <button class="method-btn" data-method="text" type="button" role="tab" aria-selected="false">Tekst → Datoteka</button>
+            <button class="method-btn" data-method="base64" type="button" role="tab" aria-selected="false">Base64 → Datoteka</button>
           </div>
         </div>
 
-        <div id="urlMethod" class="method-content">
+        <section id="urlMethod" class="method-content" role="tabpanel">
           <div class="row" style="margin-top: 18px;">
-            <label>URL datoteke:</label>
-            <input id="urlInput" type="text" placeholder="https://primjer.com/datoteka.zip" />
+            <label for="urlInput">URL datoteke:</label>
+            <input id="urlInput" type="url" inputmode="url" placeholder="https://primjer.com/datoteka.zip" autocomplete="url" />
           </div>
+          <div id="platformHint" class="platform-hint" hidden></div>
           <div class="row">
-            <label>Naziv datoteke (neobavezno):</label>
-            <input id="urlFilename" type="text" placeholder="Ostavi prazno za originalni naziv" />
+            <label for="urlFilename">Naziv datoteke (neobavezno):</label>
+            <input id="urlFilename" type="text" placeholder="Ostavi prazno za naziv sa servera" />
           </div>
           <div class="row">
             <button id="urlDownloadBtn" class="btn btn-primary" type="button">Preuzmi s URL-a</button>
           </div>
-          <div id="urlStatus" class="info-box" style="display:none;"></div>
-        </div>
+          <div id="urlStatus" class="info-box" role="status" aria-live="polite" hidden></div>
+        </section>
 
-        <div id="textMethod" class="method-content" style="display:none;">
+        <section id="textMethod" class="method-content" role="tabpanel" hidden>
           <div class="row" style="margin-top: 18px;">
+            <label class="sr-only" for="textInput">Tekst za preuzimanje</label>
             <textarea id="textInput" placeholder="Upiši tekst koji želiš preuzeti kao datoteku..."></textarea>
           </div>
           <div class="row">
-            <label>Naziv datoteke:</label>
+            <label for="textFilename">Naziv datoteke:</label>
             <input id="textFilename" type="text" value="tekst.txt" placeholder="tekst.txt" />
           </div>
           <div class="row">
-            <label>Format:</label>
+            <label for="textFormat">Format:</label>
             <select id="textFormat">
               <option value="text/plain">Obični tekst (.txt)</option>
               <option value="text/html">HTML (.html)</option>
@@ -71,125 +75,223 @@
           <div class="row">
             <button id="textDownloadBtn" class="btn btn-primary" type="button">Preuzmi kao datoteku</button>
           </div>
-        </div>
+          <div id="textStatus" class="info-box" role="status" aria-live="polite" hidden></div>
+        </section>
 
-        <div id="base64Method" class="method-content" style="display:none;">
+        <section id="base64Method" class="method-content" role="tabpanel" hidden>
           <div class="row" style="margin-top: 18px;">
-            <textarea id="base64Input" placeholder="Upiši Base64 kodirani sadržaj..."></textarea>
+            <label class="sr-only" for="base64Input">Base64 sadržaj</label>
+            <textarea id="base64Input" spellcheck="false" placeholder="Upiši Base64 sadržaj ili cijeli data: URL..."></textarea>
           </div>
           <div class="row">
-            <label>Naziv datoteke:</label>
+            <label for="base64Filename">Naziv datoteke:</label>
             <input id="base64Filename" type="text" value="datoteka.bin" placeholder="datoteka.bin" />
           </div>
           <div class="row">
             <button id="base64DownloadBtn" class="btn btn-primary" type="button">Preuzmi Base64</button>
           </div>
-          <div id="base64Status" class="info-box" style="display:none;"></div>
-        </div>
+          <div id="base64Status" class="info-box" role="status" aria-live="polite" hidden></div>
+        </section>
       </div>
     </div>
   </div>
 
   <script>
-    // Metode
     const methodBtns = document.querySelectorAll('.method-btn');
     const methodContents = document.querySelectorAll('.method-content');
 
+    function showStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.classList.toggle('error', isError);
+      element.hidden = false;
+    }
+
+    function sanitizeFilename(value, fallback) {
+      const cleaned = String(value || '')
+        .replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_')
+        .replace(/^\.+$/, '')
+        .trim()
+        .slice(0, 180);
+      return cleaned || fallback;
+    }
+
+    function downloadBlob(blob, filename) {
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = sanitizeFilename(filename, 'datoteka');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    }
+
+    function filenameFromDisposition(header) {
+      if (!header) return '';
+      const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+      if (utf8Match) {
+        try { return decodeURIComponent(utf8Match[1]); } catch (_) { return utf8Match[1]; }
+      }
+      const quotedMatch = header.match(/filename="([^"]+)"/i);
+      const plainMatch = header.match(/filename=([^;\s]+)/i);
+      return quotedMatch?.[1] || plainMatch?.[1] || '';
+    }
+
+    function filenameFromUrl(url) {
+      const part = url.pathname.split('/').filter(Boolean).pop() || '';
+      try { return decodeURIComponent(part); } catch (_) { return part; }
+    }
+
+    function extensionForMime(mime) {
+      return ({ 'text/plain': '.txt', 'text/html': '.html', 'text/csv': '.csv', 'application/json': '.json' })[mime] || '.txt';
+    }
+
+    function platformMessage(url) {
+      const host = url.hostname.toLowerCase().replace(/^www\./, '');
+      if (host === 'youtube.com' || host === 'youtu.be' || host.endsWith('.youtube.com')) {
+        return 'YouTube stranice, playliste i streamovi nisu izravne datoteke. Ovaj lokalni alat ih namjerno ne zaobilazi niti koristi plaćeni proxy. Za vlastite videozapise koristi preuzimanje u YouTube Studiju ili Google Takeoutu.';
+      }
+      if (['facebook.com', 'instagram.com', 'x.com', 'twitter.com', 'tiktok.com'].some(domain => host === domain || host.endsWith(`.${domain}`))) {
+        return 'Poveznica društvene mreže obično nije izravna video-datoteka, nego zaštićena stranica ili odvojeni video/audio stream. Alat neće skidati stranicu bez zvuka niti spajati zaštićene streamove. Za vlastiti sadržaj upotrijebi službeni izvoz/Download your information; javni, izravni MP4 URL može raditi ako ga izvor dopušta preko CORS-a.';
+      }
+      return '';
+    }
+
+    function updatePlatformHint() {
+      const hint = document.getElementById('platformHint');
+      try {
+        const message = platformMessage(new URL(document.getElementById('urlInput').value.trim()));
+        hint.textContent = message;
+        hint.hidden = !message;
+      } catch (_) {
+        hint.hidden = true;
+      }
+    }
+
     methodBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        methodBtns.forEach(b => b.classList.remove('active'));
-        methodContents.forEach(c => c.style.display = 'none');
-        btn.classList.add('active');
-        const method = btn.dataset.method;
-        document.getElementById(method + 'Method').style.display = 'block';
+        methodBtns.forEach(button => {
+          const selected = button === btn;
+          button.classList.toggle('active', selected);
+          button.setAttribute('aria-selected', String(selected));
+        });
+        methodContents.forEach(content => { content.hidden = true; });
+        document.getElementById(`${btn.dataset.method}Method`).hidden = false;
       });
     });
 
-    // URL preuzimanje
-    document.getElementById('urlDownloadBtn').addEventListener('click', () => {
-      const url = document.getElementById('urlInput').value.trim();
-      const customName = document.getElementById('urlFilename').value.trim();
-      const statusBox = document.getElementById('urlStatus');
+    document.getElementById('urlInput').addEventListener('input', updatePlatformHint);
 
-      if (!url) {
-        statusBox.textContent = '❌ Molim upiši URL';
-        statusBox.style.display = 'block';
-        return;
-      }
+    document.getElementById('urlDownloadBtn').addEventListener('click', async () => {
+      const input = document.getElementById('urlInput');
+      const customName = document.getElementById('urlFilename').value;
+      const button = document.getElementById('urlDownloadBtn');
+      const statusBox = document.getElementById('urlStatus');
+      let parsedUrl;
 
       try {
-        const parsedUrl = new URL(url);
+        parsedUrl = new URL(input.value.trim());
         if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
           throw new Error('Dopušteni su samo HTTP i HTTPS URL-ovi.');
         }
-        const a = document.createElement('a');
-        a.href = parsedUrl.href;
-        a.download = customName || parsedUrl.pathname.split('/').pop() || 'datoteka';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        statusBox.textContent = '✓ Preuzimanje započeto!';
-        statusBox.style.display = 'block';
-      } catch (e) {
-        statusBox.textContent = '❌ Greška: ' + e.message;
-        statusBox.style.display = 'block';
-      }
-    });
-
-    // Tekst preuzimanje
-    document.getElementById('textDownloadBtn').addEventListener('click', () => {
-      const text = document.getElementById('textInput').value;
-      const filename = document.getElementById('textFilename').value || 'tekst.txt';
-      const format = document.getElementById('textFormat').value;
-
-      if (!text) {
-        alert('Molim upiši tekst');
+      } catch (error) {
+        showStatus(statusBox, `Greška: ${error.message || 'upiši valjan URL.'}`, true);
         return;
       }
 
-      const blob = new Blob([text], { type: format });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const platformWarning = platformMessage(parsedUrl);
+      if (platformWarning) {
+        showStatus(statusBox, platformWarning, true);
+        return;
+      }
+      if (/\.(m3u8|mpd)(?:$|[?#])/i.test(parsedUrl.pathname)) {
+        showStatus(statusBox, 'Ovo je streaming manifest, a ne video-datoteka sa zvukom. Alat ga ne preuzima niti spaja odvojene streamove.', true);
+        return;
+      }
+
+      button.disabled = true;
+      showStatus(statusBox, 'Preuzimam izravno s odabranog izvora…');
+      try {
+        const response = await fetch(parsedUrl.href, {
+          method: 'GET',
+          credentials: 'omit',
+          redirect: 'follow',
+          referrerPolicy: 'no-referrer'
+        });
+        if (!response.ok) throw new Error(`Server je vratio status ${response.status}.`);
+        const contentType = response.headers.get('content-type') || '';
+        if (/application\/(dash\+xml|vnd\.apple\.mpegurl)|application\/x-mpegurl/i.test(contentType)) {
+          throw new Error('Izvor je poslao streaming manifest, a ne video-datoteku sa zvukom.');
+        }
+        const blob = await response.blob();
+        if (!blob.size) throw new Error('Server je vratio praznu datoteku.');
+        const filename = sanitizeFilename(
+          customName || filenameFromDisposition(response.headers.get('content-disposition')) || filenameFromUrl(parsedUrl) || 'datoteka',
+          'datoteka'
+        );
+        downloadBlob(blob, filename);
+        showStatus(statusBox, `Preuzimanje je pokrenuto (${(blob.size / 1024 / 1024).toFixed(2)} MB).`);
+      } catch (error) {
+        statusBox.textContent = '';
+        const message = document.createTextNode('Izravno preuzimanje nije dopušteno ili nije uspjelo. Izvor možda blokira CORS. Možeš otvoriti izvor u novoj kartici: ');
+        const directLink = document.createElement('a');
+        directLink.href = parsedUrl.href;
+        directLink.target = '_blank';
+        directLink.rel = 'noopener noreferrer';
+        directLink.textContent = 'otvori URL';
+        statusBox.append(message, directLink);
+        statusBox.classList.add('error');
+        statusBox.hidden = false;
+      } finally {
+        button.disabled = false;
+      }
     });
 
-    // Base64 preuzimanje
+    document.getElementById('textDownloadBtn').addEventListener('click', () => {
+      const text = document.getElementById('textInput').value;
+      const format = document.getElementById('textFormat').value;
+      const statusBox = document.getElementById('textStatus');
+      let filename = sanitizeFilename(document.getElementById('textFilename').value, `tekst${extensionForMime(format)}`);
+      if (!/\.[a-z0-9]{1,10}$/i.test(filename)) filename += extensionForMime(format);
+      if (!text) {
+        showStatus(statusBox, 'Molim upiši tekst za preuzimanje.', true);
+        return;
+      }
+      downloadBlob(new Blob([text], { type: `${format};charset=utf-8` }), filename);
+      showStatus(statusBox, 'Datoteka je pripremljena lokalno u pregledniku.');
+    });
+
     document.getElementById('base64DownloadBtn').addEventListener('click', () => {
-      const base64 = document.getElementById('base64Input').value.trim();
-      const filename = document.getElementById('base64Filename').value || 'datoteka.bin';
+      const input = document.getElementById('base64Input').value.trim();
       const statusBox = document.getElementById('base64Status');
+      let mimeType = 'application/octet-stream';
+      let base64 = input;
+      const dataUrl = input.match(/^data:([^;,]+)?;base64,(.*)$/is);
+      if (dataUrl) {
+        mimeType = dataUrl[1] || mimeType;
+        base64 = dataUrl[2];
+      }
+      base64 = base64.replace(/\s/g, '').replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4) base64 += '=';
 
       if (!base64) {
-        statusBox.textContent = '❌ Molim upiši Base64 sadržaj';
-        statusBox.style.display = 'block';
+        showStatus(statusBox, 'Molim upiši Base64 sadržaj.', true);
+        return;
+      }
+      if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
+        showStatus(statusBox, 'Base64 sadržaj ima nedopuštene znakove.', true);
         return;
       }
 
       try {
-        const binaryString = atob(base64);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        const blob = new Blob([bytes], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        statusBox.textContent = '✓ Preuzimanje završeno!';
-        statusBox.style.display = 'block';
-      } catch (e) {
-        statusBox.textContent = '❌ Greška pri dekodiranju Base64: ' + e.message;
-        statusBox.style.display = 'block';
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+        const filename = sanitizeFilename(document.getElementById('base64Filename').value, 'datoteka.bin');
+        downloadBlob(new Blob([bytes], { type: mimeType }), filename);
+        showStatus(statusBox, 'Base64 je dekodiran i datoteka je pripremljena lokalno.');
+      } catch (error) {
+        showStatus(statusBox, `Greška pri dekodiranju Base64: ${error.message || error}`, true);
       }
     });
   </script>

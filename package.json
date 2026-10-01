@@ -1,0 +1,10 @@
+{
+  "name": "hrvatski-kanal-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Besplatni lokalni alati Hrvatskog Kanala bez builda i bez runtime ovisnosti.",
+  "scripts": {
+    "test": "node scripts/check-static.mjs",
+    "test:static": "node scripts/check-static.mjs"
+  }
+}

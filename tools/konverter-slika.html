@@ -23,7 +23,7 @@
 
       <div class="tool-box tool-layout">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" />
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" />
           Učitaj sliku
         </label>
         <div class="row">
@@ -48,6 +48,7 @@
     const previewImg = document.getElementById('previewImg');
     let selectedFormat = 'image/png';
     let sourceImage = null;
+    let convertedDataUrl = '';
 
     fileInput.addEventListener('change', (event) => {
       const file = event.target.files[0];
@@ -57,8 +58,10 @@
         const img = new Image();
         img.onload = () => {
           sourceImage = img;
+          convertedDataUrl = '';
           previewImg.src = e.target.result;
           previewImg.style.display = 'block';
+          downloadBtn.disabled = true;
         };
         img.src = e.target.result;
       };
@@ -70,6 +73,8 @@
         document.querySelectorAll('.format-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         selectedFormat = button.dataset.format;
+        convertedDataUrl = '';
+        downloadBtn.disabled = true;
       });
     });
 
@@ -79,16 +84,21 @@
       canvas.width = sourceImage.width;
       canvas.height = sourceImage.height;
       const ctx = canvas.getContext('2d');
+      if (selectedFormat === 'image/jpeg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
       ctx.drawImage(sourceImage, 0, 0);
-      previewImg.src = canvas.toDataURL(selectedFormat);
+      convertedDataUrl = canvas.toDataURL(selectedFormat);
+      previewImg.src = convertedDataUrl;
       previewImg.style.display = 'block';
       downloadBtn.disabled = false;
     });
 
     downloadBtn.addEventListener('click', () => {
-      if (!previewImg.src) return;
+      if (!convertedDataUrl) return;
       const a = document.createElement('a');
-      a.href = previewImg.src;
+      a.href = convertedDataUrl;
       a.download = 'pretvoreno.' + selectedFormat.split('/')[1];
       a.click();
     });
