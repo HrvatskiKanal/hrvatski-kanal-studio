@@ -161,13 +161,7 @@
 
       const mode = bgMode.value;
       if (mode === 'transparent') {
-        const size = 18;
-        for (let y = 0; y < output.height; y += size) {
-          for (let x = 0; x < output.width; x += size) {
-            octx.fillStyle = ((x / size + y / size) % 2 === 0) ? '#f1f5f9' : '#e2e8f0';
-            octx.fillRect(x, y, size, size);
-          }
-        }
+        octx.clearRect(0, 0, output.width, output.height);
       } else if (mode === 'white') {
         octx.fillStyle = '#ffffff';
         octx.fillRect(0, 0, output.width, output.height);

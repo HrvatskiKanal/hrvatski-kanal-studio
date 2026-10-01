@@ -20,7 +20,7 @@
         <textarea id="qrText" placeholder="Upiši tekst ili URL..."></textarea>
         <div class="row">
           <button id="generateBtn" class="btn btn-primary" type="button">Generiraj QR</button>
-          <button id="downloadBtn" class="btn btn-success" type="button">Preuzmi</button>
+          <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
         </div>
         <div class="row" style="justify-content:center;">
           <canvas id="qrCanvas" width="220" height="220" style="background:white;border-radius:16px;padding:12px;border:1px solid rgba(148,163,184,0.2);"></canvas>
@@ -38,9 +38,14 @@
 
     generateBtn.addEventListener('click', () => {
       const value = qrText.value.trim();
+      downloadBtn.disabled = true;
       if (!value) return;
       QRCode.toCanvas(canvas, value, { width: 220, margin: 2 }, (error) => {
-        if (error) console.error(error);
+        if (error) {
+          console.error(error);
+          return;
+        }
+        downloadBtn.disabled = false;
       });
     });
 

@@ -6,7 +6,7 @@ Besplatni lokalni web alati za obradu slika, teksta, PDF-a, preuzimanja i transk
 
 1. **Brisanje pozadine** — uklanjanje jednobojne pozadine
 2. **Konverter slika** — PNG, JPG i WebP
-3. **Brojač teksta** — riječi, znakovi, rečenice i vrijeme čitanja
+3. **Brojač teksta** — riječi, znakovi i rečenice
 4. **Čitač teksta** — tekst u govor preko browsera
 5. **Paleta boja** — dominantne boje iz slike
 6. **QR kod generator** — QR kod za tekst ili poveznicu
@@ -15,7 +15,7 @@ Besplatni lokalni web alati za obradu slika, teksta, PDF-a, preuzimanja i transk
 9. **Spajanje slika** — kolaž od više slika
 10. **Okvir i sjena** — okvir i sjena na fotografiji
 11. **Vodeni žig** — tekstualni žig na slici
-12. **Zamućivanje pozadine** — fokusirani subjekt i zamućena pozadina
+12. **Zamućivanje slike** — efekt zamućenja na cijeloj slici
 13. **Downloader** — URL, tekst i Base64 u datoteku
 14. **Transkriptor audio i videa** — lokalni Whisper za datoteke i Web Speech API za mikrofon
 

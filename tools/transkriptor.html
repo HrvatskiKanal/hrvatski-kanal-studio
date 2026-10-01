@@ -186,7 +186,24 @@
       startMicBtn.disabled = true; stopMicBtn.disabled = true; setStatus('Ovaj browser ne podržava Web Speech API. Za datoteke koristi transkripciju preko lokalnog Whisper modela.', true);
     }
 
-    copyBtn.onclick = async () => { if (!transcript.value) return; await navigator.clipboard.writeText(transcript.value); setStatus('Tekst je kopiran.'); };
+    copyBtn.onclick = async () => {
+      if (!transcript.value) {
+        setStatus('Nema teksta za kopiranje.', true);
+        return;
+      }
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(transcript.value);
+        } else {
+          transcript.select();
+          if (!document.execCommand('copy')) throw new Error('Kopiranje nije podržano.');
+        }
+        setStatus('Tekst je kopiran.');
+      } catch (error) {
+        transcript.select();
+        setStatus('Kopiranje nije uspjelo — označili smo tekst za ručno kopiranje.', true);
+      }
+    };
     downloadBtn.onclick = () => { const blob = new Blob([transcript.value], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'transkript.txt'; a.click(); URL.revokeObjectURL(url); };
   </script>
 </body>

@@ -114,9 +114,13 @@
       }
 
       try {
+        const parsedUrl = new URL(url);
+        if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+          throw new Error('Dopušteni su samo HTTP i HTTPS URL-ovi.');
+        }
         const a = document.createElement('a');
-        a.href = url;
-        a.download = customName || url.split('/').pop() || 'datoteka';
+        a.href = parsedUrl.href;
+        a.download = customName || parsedUrl.pathname.split('/').pop() || 'datoteka';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
