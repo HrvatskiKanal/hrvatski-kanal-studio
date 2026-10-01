@@ -31,6 +31,22 @@
   ];
 
   const normalize = (value) => value.toLocaleLowerCase('hr-HR').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  async function wikipediaAnswer(question) {
+    const url = `https://hr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(question)}&format=json&origin=*&utf8=1&srlimit=1`;
+    const response = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!response.ok) return null;
+    const search = await response.json();
+    const title = search.query?.search?.[0]?.title?.trim();
+    if (!title) return null;
+    const extractUrl = `https://hr.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(title)}&format=json&origin=*`;
+    const extractResponse = await fetch(extractUrl, { headers: { Accept: 'application/json' } });
+    if (!extractResponse.ok) return null;
+    const extract = await extractResponse.json();
+    const page = Object.values(extract.query?.pages || {})[0];
+    const summary = page?.extract?.replace(/\s+/g, ' ').trim();
+    if (!summary) return null;
+    return { text: `Nakon pretrage Hrvatskog Kanala pronašao sam i javni sažetak s Wikipedije o temi „${title}“. ${summary.slice(0, 600)}${summary.length > 600 ? '…' : ''}`, links: [] };
+  }
   const answer = (question) => {
     const q = normalize(question.trim());
     if (!q) return { text: 'Napiši što tražiš — alat, rubriku, članak ili temu — pa ću pokušati pronaći najbliži odgovor.', links: [] };
@@ -44,7 +60,7 @@
 
   const root = document.createElement('div');
   root.className = 'hk-agent';
-  root.innerHTML = `<button class="hk-agent-launch" type="button" aria-expanded="false" aria-controls="hk-agent-panel"><span class="hk-agent-mark">HK</span><span>HK Agent</span></button><section id="hk-agent-panel" class="hk-agent-panel" hidden aria-label="HK Agent"><header><div><strong>HK Agent</strong><small>Pretraži alate, rubrike i teme</small></div><button class="hk-agent-close" type="button" aria-label="Zatvori">×</button></header><div class="hk-agent-messages" aria-live="polite"><div class="hk-agent-message hk-agent-bot">Pozdrav! Mogu pretražiti alate i stranice Hrvatskog Kanala. Video downloader nije uključen.</div></div><form class="hk-agent-form"><label class="sr-only" for="hk-agent-input">Pitanje za HK Agent</label><input id="hk-agent-input" autocomplete="off" placeholder="Pretraži alat, rubriku ili temu…" /><button type="submit" aria-label="Pošalji">→</button></form><p class="hk-agent-note">Bez prijave, praćenja i limita pitanja. Radi lokalno, bez AI API-ja.</p></section>`;
+  root.innerHTML = `<button class="hk-agent-launch" type="button" aria-expanded="false" aria-controls="hk-agent-panel"><span class="hk-agent-mark">HK</span><span>HK Agent</span></button><section id="hk-agent-panel" class="hk-agent-panel" hidden aria-label="HK Agent"><header><div><strong>HK Agent</strong><small>Pretraži alate, rubrike i teme</small></div><button class="hk-agent-close" type="button" aria-label="Zatvori">×</button></header><div class="hk-agent-messages" aria-live="polite"><div class="hk-agent-message hk-agent-bot">Pozdrav! Mogu pretražiti alate i stranice Hrvatskog Kanala. Video downloader nije uključen.</div></div><form class="hk-agent-form"><label class="sr-only" for="hk-agent-input">Pitanje za HK Agent</label><input id="hk-agent-input" autocomplete="off" placeholder="Pretraži alat, rubriku ili temu…" /><button type="submit" aria-label="Pošalji">→</button></form><p class="hk-agent-note">Lokalna pretraga je osnovna. Ako nema rezultata, dohvaća se javni Wikipedia sažetak bez vanjske poveznice u chatu.</p></section>`;
   document.body.appendChild(root);
   const launch = root.querySelector('.hk-agent-launch');
   const panel = root.querySelector('.hk-agent-panel');
@@ -55,14 +71,18 @@
   const toggle = (open) => { panel.hidden = !open; launch.setAttribute('aria-expanded', String(open)); if (open) input.focus(); };
   launch.addEventListener('click', () => toggle(panel.hidden));
   close.addEventListener('click', () => toggle(false));
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const question = input.value.trim();
     if (!question) return;
     const user = document.createElement('div'); user.className = 'hk-agent-message hk-agent-user'; user.textContent = question; messages.appendChild(user);
     const result = answer(question);
-    const bot = document.createElement('div'); bot.className = 'hk-agent-message hk-agent-bot'; bot.textContent = result.text; messages.appendChild(bot);
-    if (result.links.length) { const list = document.createElement('div'); list.className = 'hk-agent-links'; result.links.forEach((tool) => { const link = document.createElement('a'); link.href = tool.href; link.textContent = `Otvori: ${tool.name}`; list.appendChild(link); }); messages.appendChild(list); }
+    const show = (response) => { const bot = document.createElement('div'); bot.className = 'hk-agent-message hk-agent-bot'; bot.textContent = response.text; messages.appendChild(bot); if (response.links.length) { const list = document.createElement('div'); list.className = 'hk-agent-links'; response.links.forEach((tool) => { const link = document.createElement('a'); link.href = tool.href; link.textContent = `Otvori: ${tool.name}`; list.appendChild(link); }); messages.appendChild(list); } };
+    if (result.links.length) show(result);
+    else if (!/^(pozdrav|bok|hej|hello|zdravo)/.test(normalize(question)) && !['downloader', 'preuzim', 'youtube', 'tiktok', 'besplat', 'cijena', 'novac'].some((term) => normalize(question).includes(term))) {
+      input.disabled = true;
+      try { show(await wikipediaAnswer(question) || result); } catch { show(result); } finally { input.disabled = false; }
+    } else show(result);
     input.value = ''; messages.scrollTop = messages.scrollHeight;
   });
 })();
