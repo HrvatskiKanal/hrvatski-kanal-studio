@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CupoBot — Hrvatski Kanal Studio</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="tool-page">
+    <div class="tool-topbar">
+      <a href="../index.html">← Natrag</a>
+      <span>CupoBot</span>
+    </div>
+    <div class="tool-body">
+      <h1>CupoBot</h1>
+      <p>Neovisni hrvatski istraživački mozak pozvan kao Studio alat. Studio je klijent; privatni hub ostaje izvor istine.</p>
+
+      <div class="tool-box">
+        <label class="label" for="message">Pitanje ili zadatak</label>
+        <textarea id="message" placeholder="Npr. Istraži što se danas događa u Hrvatskoj i EU-u..."></textarea>
+        <div class="row">
+          <button id="askBtn" class="btn btn-primary" type="button">Pošalji CupoBotu</button>
+        </div>
+        <p id="status" class="label" role="status">Studio bridge još nije konfiguriran.</p>
+        <pre id="answer" class="panel" style="white-space:pre-wrap; padding:16px; border-radius:12px; min-height:100px;">CupoBot će ovdje odgovoriti kada administrator spoji privatni hub preko sigurnog bridgea.</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const message = document.getElementById('message');
+    const askBtn = document.getElementById('askBtn');
+    const status = document.getElementById('status');
+    const answer = document.getElementById('answer');
+
+    function endpoint() {
+      return window.HK_CUPOBOT_ENDPOINT || '/api/cupobot';
+    }
+
+    askBtn.addEventListener('click', async () => {
+      const text = message.value.trim();
+      if (!text) {
+        status.textContent = 'Upišite pitanje ili zadatak.';
+        return;
+      }
+      askBtn.disabled = true;
+      status.textContent = 'CupoBot obrađuje zadatak…';
+      try {
+        const response = await fetch(endpoint(), {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ message: text, client: 'hrvatski-kanal-studio' }),
+        });
+        if (!response.ok) throw new Error(`Bridge HTTP ${response.status}`);
+        const data = await response.json();
+        answer.textContent = data.text || data.answer || 'CupoBot nije vratio tekstualni odgovor.';
+        status.textContent = data.requiresApproval ? 'Nacrt čeka odobrenje.' : 'Odgovor je spreman.';
+      } catch (error) {
+        status.textContent = 'Privatni CupoBot hub još nije spojen.';
+        answer.textContent = 'Studio alat je pripremljen, ali bridge prema privatnom CupoBot hubu nije javno izložen. Administrator ga treba spojiti server-side, bez API ključeva u browseru.';
+      } finally {
+        askBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
