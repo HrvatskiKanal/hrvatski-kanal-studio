@@ -55,9 +55,7 @@
     </div>
   </div>
   <script type="module">
-    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2';
-    env.allowLocalModels = false;
-    env.useBrowserCache = true;
+    import { createWhisperTranscriber } from '../vendor/studio-transcriber.js';
 
     const fileInput = document.getElementById('fileInput');
     const fileName = document.getElementById('fileName');
@@ -144,8 +142,7 @@
       try {
         setStatus('Učitavam lokalni Whisper model… prvi put može potrajati.');
         if (!transcriber) {
-          transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
-            device: 'wasm', dtype: 'q8',
+          transcriber = await createWhisperTranscriber({
             progress_callback: data => { if (data.progress) progress.value = Math.max(2, Math.min(95, data.progress)); }
           });
         }
