@@ -248,14 +248,32 @@ body {
 }
 
 .tool-name {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
   font-size: 1.1rem;
   font-weight: 800;
   margin-bottom: 6px;
 }
 
+.tool-name:hover,
+.tool-open:hover {
+  color: #bfdbfe;
+  text-decoration: underline;
+}
+
 .tool-desc {
   color: var(--muted);
   line-height: 1.5;
+}
+
+.tool-open {
+  display: inline-block;
+  margin-top: 12px;
+  color: #93c5fd;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .tool-page {
