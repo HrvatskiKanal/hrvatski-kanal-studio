@@ -12,7 +12,8 @@ const tools = [
   { name: 'Vodeni žig', slug: 'vodeni-zig', description: 'Dodaj tekst na sliku.', icon: '💧', href: 'tools/vodeni-zig.html' },
   { name: 'Zamućivanje slike', slug: 'zamucivanje-pozadine', description: 'Dodaj efekt zamućenja cijeloj slici.', icon: '🌫️', href: 'tools/zamucivanje-pozadine.html' },
   { name: 'Downloader', slug: 'downloader', description: 'Preuzmi URL, tekst ili Base64 u datoteku lokalno u pregledniku.', icon: '⬇️', href: 'tools/downloader.html' },
-  { name: 'Transkriptor audio i videa', slug: 'transkriptor', description: 'Pretvori govor iz audio/video datoteke ili mikrofona u tekst.', icon: '🎙️', href: 'tools/transkriptor.html' }
+  { name: 'Transkriptor audio i videa', slug: 'transkriptor', description: 'Pretvori govor iz audio/video datoteke ili mikrofona u tekst.', icon: '🎙️', href: 'tools/transkriptor.html' },
+  { name: 'CupoBot', slug: 'cupobot', description: 'Neovisni hrvatski istraživački mozak kao Studio alat.', icon: '🧠', href: 'tools/cupobot.html' }
 ];
 
 const grid = document.getElementById('toolGrid');
