@@ -19,11 +19,12 @@ const tools = [
 const grid = document.getElementById('toolGrid');
 
 if (grid) {
-  tools.forEach(tool => {
+  tools.forEach((tool, index) => {
     const card = document.createElement('a');
     card.href = tool.href;
     card.className = 'tool-card';
     card.innerHTML = `
+      <div class="tool-number">${index + 1}</div>
       <div class="tool-icon">${tool.icon}</div>
       <div class="tool-name">${tool.name}</div>
       <div class="tool-desc">${tool.description}</div>
