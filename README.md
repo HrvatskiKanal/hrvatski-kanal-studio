@@ -14,9 +14,9 @@ Besplatni lokalni web alati za obradu slika, teksta, PDF-a, preuzimanja i transk
 8. **Okvir i sjena** — okvir i sjena na fotografiji
 9. **Spajanje slika** — kolaž od više slika
 10. **Konverter slika** — PNG, JPG i WebP
-11. **QR kod generator** — QR kod za tekst ili poveznicu
-12. **Brisanje pozadine** — uklanjanje jednobojne pozadine
-13. **Zamućivanje slike** — efekt zamućenja na cijeloj slici
+11. **Brisanje pozadine** — uklanjanje jednobojne pozadine
+12. **Zamućivanje slike** — efekt zamućenja na cijeloj slici
+13. **QR kod generator** — QR kod za tekst ili poveznicu
 14. **Optimizacija slika** — promjena dimenzija i kvalitete
 15. **Transkriptor audio i videa** — lokalni Whisper i Web Speech API za mikrofon
 

@@ -9,9 +9,9 @@ const tools = [
   { name: 'Okvir i sjena', slug: 'okvir-i-sjena', description: 'okvir i sjena na fotografiji', icon: '🖼️', href: 'tools/okvir-i-sjena.html' },
   { name: 'Spajanje slika', slug: 'spajanje-slika', description: 'kolaž od više slika', icon: '🧩', href: 'tools/spajanje-slika.html' },
   { name: 'Konverter slika', slug: 'konverter-slika', description: 'PNG, JPG i WebP', icon: '🖼️', href: 'tools/konverter-slika.html' },
-  { name: 'QR kod generator', slug: 'qr-kod-generator', description: 'QR kod za tekst ili poveznicu', icon: '📱', href: 'tools/qr-kod-generator.html' },
   { name: 'Brisanje pozadine', slug: 'brisanje-pozadine', description: 'uklanjanje jednobojne pozadine', icon: '🧹', href: 'tools/brisanje-pozadine.html' },
   { name: 'Zamućivanje slike', slug: 'zamucivanje-pozadine', description: 'efekt zamućenja na cijeloj slici', icon: '🌫️', href: 'tools/zamucivanje-pozadine.html' },
+  { name: 'QR kod generator', slug: 'qr-kod-generator', description: 'QR kod za tekst ili poveznicu', icon: '📱', href: 'tools/qr-kod-generator.html' },
   { name: 'Optimizacija slika', slug: 'optimizacija-slika', description: 'promjena dimenzija i kvalitete', icon: '⚡', href: 'tools/optimizacija-slika.html' },
   { name: 'Transkriptor audio i videa', slug: 'transkriptor', description: 'lokalni Whisper i Web Speech API za mikrofon', icon: '🎙️', href: 'tools/transkriptor.html' }
 ];
