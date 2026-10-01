@@ -3,93 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Optimizacija slika</title>
+  <title>QR kod generator</title>
   <link rel="stylesheet" href="../styles.css" />
-  <style>
-    .preview-image { max-width: 100%; max-height: 360px; display: block; border-radius: 12px; }
-  </style>
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>Optimizacija slika</span>
+      <span>QR kod generator</span>
     </div>
     <div class="tool-body">
-      <h1>Optimizacija slika</h1>
-      <p>Promijeni veličinu i kvalitetu slike za manju veličinu datoteke.</p>
+      <h1>QR kod generator</h1>
+      <p>Generiraj QR kod za URL, e-mail ili tekst.</p>
 
       <div class="tool-box">
-        <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
-          <input id="fileInput" type="file" accept="image/*" />
-          Učitaj sliku
-        </label>
-
+        <textarea id="qrText" placeholder="Upiši tekst ili URL..."></textarea>
         <div class="row">
-          <label>Širina:</label>
-          <input id="widthInput" type="number" value="1200" min="100" max="3000" />
+          <button id="generateBtn" class="btn btn-primary" type="button">Generiraj QR</button>
+          <button id="downloadBtn" class="btn btn-success" type="button">Preuzmi</button>
         </div>
-        <div class="row">
-          <label>Kvaliteta:</label>
-          <input id="qualityInput" type="range" min="0.1" max="1" step="0.1" value="0.8" />
+        <div class="row" style="justify-content:center;">
+          <canvas id="qrCanvas" width="220" height="220" style="background:white;border-radius:16px;padding:12px;border:1px solid rgba(148,163,184,0.2);"></canvas>
         </div>
-        <div class="row">
-          <button id="optimizeBtn" class="btn btn-primary" type="button">Optimiziraj</button>
-          <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
-        </div>
-      </div>
-
-      <div class="tool-box" style="margin-top:16px;">
-        <img id="previewImage" class="preview-image" alt="Pretpregled" style="display:none;" />
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    const fileInput = document.getElementById('fileInput');
-    const widthInput = document.getElementById('widthInput');
-    const qualityInput = document.getElementById('qualityInput');
-    const optimizeBtn = document.getElementById('optimizeBtn');
+    const qrText = document.getElementById('qrText');
+    const canvas = document.getElementById('qrCanvas');
+    const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
-    const previewImage = document.getElementById('previewImage');
-    let currentImage = null;
 
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          currentImage = img;
-          previewImage.src = e.target.result;
-          previewImage.style.display = 'block';
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-
-    optimizeBtn.addEventListener('click', () => {
-      if (!currentImage) return;
-      const canvas = document.createElement('canvas');
-      const ratio = currentImage.width / currentImage.height;
-      canvas.width = Number(widthInput.value) || 1200;
-      canvas.height = Math.round(canvas.width / ratio);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', Number(qualityInput.value));
-      previewImage.src = dataUrl;
-      previewImage.style.display = 'block';
-      downloadBtn.disabled = false;
+    generateBtn.addEventListener('click', () => {
+      const value = qrText.value.trim();
+      if (!value) return;
+      QRCode.toCanvas(canvas, value, { width: 220, margin: 2 }, (error) => {
+        if (error) console.error(error);
+      });
     });
 
     downloadBtn.addEventListener('click', () => {
-      if (!previewImage.src) return;
-      const a = document.createElement('a');
-      a.download = 'optimizirana-slika.jpg';
-      a.href = previewImage.src;
-      a.click();
+      const link = document.createElement('a');
+      link.download = 'qr-kod.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     });
   </script>
 </body>

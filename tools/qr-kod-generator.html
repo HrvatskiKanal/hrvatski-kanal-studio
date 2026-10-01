@@ -3,52 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR kod generator</title>
+  <title>Paleta boja</title>
   <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-top: 16px; }
+    .color-box { border-radius: 12px; overflow: hidden; border: 1px solid rgba(148,163,184,0.2); }
+    .color-box .block { height: 120px; }
+    .color-box .code { padding: 10px; text-align: center; font-weight: 700; color: var(--text); }
+  </style>
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>QR kod generator</span>
+      <span>Paleta boja</span>
     </div>
     <div class="tool-body">
-      <h1>QR kod generator</h1>
-      <p>Generiraj QR kod za URL, e-mail ili tekst.</p>
+      <h1>Paleta boja</h1>
+      <p>Učitaj sliku i izvadi glavne boje.</p>
 
       <div class="tool-box">
-        <textarea id="qrText" placeholder="Upiši tekst ili URL..."></textarea>
-        <div class="row">
-          <button id="generateBtn" class="btn btn-primary" type="button">Generiraj QR</button>
-          <button id="downloadBtn" class="btn btn-success" type="button">Preuzmi</button>
-        </div>
-        <div class="row" style="justify-content:center;">
-          <canvas id="qrCanvas" width="220" height="220" style="background:white;border-radius:16px;padding:12px;border:1px solid rgba(148,163,184,0.2);"></canvas>
-        </div>
+        <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
+          <input id="fileInput" type="file" accept="image/*" />
+          Učitaj sliku
+        </label>
       </div>
+
+      <div id="palette" class="palette-grid"></div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    const qrText = document.getElementById('qrText');
-    const canvas = document.getElementById('qrCanvas');
-    const generateBtn = document.getElementById('generateBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const palette = document.getElementById('palette');
 
-    generateBtn.addEventListener('click', () => {
-      const value = qrText.value.trim();
-      if (!value) return;
-      QRCode.toCanvas(canvas, value, { width: 220, margin: 2 }, (error) => {
-        if (error) console.error(error);
-      });
-    });
-
-    downloadBtn.addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = 'qr-kod.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 120;
+          canvas.height = 120;
+          ctx.drawImage(img, 0, 0, 120, 120);
+          const data = ctx.getImageData(0, 0, 120, 120).data;
+          const colors = [];
+          for (let i = 0; i < data.length; i += 64) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            if (r + g + b > 30) colors.push([r, g, b]);
+          }
+          const unique = [];
+          const seen = new Set();
+          colors.slice(0, 8).forEach(([r, g, b]) => {
+            const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+            if (!seen.has(hex)) {
+              seen.add(hex);
+              unique.push(hex);
+            }
+          });
+          palette.innerHTML = '';
+          unique.slice(0, 6).forEach(hex => {
+            const box = document.createElement('div');
+            box.className = 'color-box';
+            box.innerHTML = `<div class="block" style="background:${hex};"></div><div class="code">${hex}</div>`;
+            palette.appendChild(box);
+          });
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     });
   </script>
 </body>

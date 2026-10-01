@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vodeni žig</title>
+  <title>Okvir i sjena</title>
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
   <div class="tool-page">
     <div class="tool-topbar">
       <a href="../index.html">← Natrag</a>
-      <span>Vodeni žig</span>
+      <span>Okvir i sjena</span>
     </div>
     <div class="tool-body">
-      <h1>Vodeni žig</h1>
-      <p>Dodaj tekst u sredini slike kao vodeni žig.</p>
+      <h1>Okvir i sjena</h1>
+      <p>Dodaj okvir, sjenu i stiliziraj fotografiju.</p>
 
       <div class="tool-box">
         <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
@@ -22,28 +22,40 @@
           Učitaj sliku
         </label>
         <div class="row">
-          <input id="watermarkText" type="text" value="Hrvatski Kanal" placeholder="Tekst vodenog žiga" />
+          <label>Debljina okvira (px):</label>
+          <input id="frameSize" type="range" min="0" max="60" value="20" />
+          <span id="frameSizeValue" style="min-width:40px; font-weight:600;">20</span>
         </div>
         <div class="row">
-          <button id="applyBtn" class="btn btn-primary" type="button">Dodaj žig</button>
+          <label>Boja okvira:</label>
+          <input id="frameColor" type="color" value="#ffffff" />
+        </div>
+        <div class="row">
+          <button id="applyBtn" class="btn btn-primary" type="button">Primijeni</button>
           <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
         </div>
       </div>
 
-      <div class="tool-box" style="margin-top:16px; display:flex; justify-content:center;">
-        <canvas id="canvas" width="700" height="500"></canvas>
+      <div class="tool-box" style="margin-top:16px; display:flex; justify-content:center; overflow-x:auto;">
+        <canvas id="canvas" width="700" height="500" style="border-radius:12px;"></canvas>
       </div>
     </div>
   </div>
 
   <script>
     const fileInput = document.getElementById('fileInput');
-    const watermarkText = document.getElementById('watermarkText');
+    const frameSize = document.getElementById('frameSize');
+    const frameSizeValue = document.getElementById('frameSizeValue');
+    const frameColor = document.getElementById('frameColor');
     const applyBtn = document.getElementById('applyBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let sourceImage = null;
+
+    frameSize.addEventListener('input', () => {
+      frameSizeValue.textContent = frameSize.value;
+    });
 
     fileInput.addEventListener('change', (event) => {
       const file = event.target.files[0];
@@ -53,9 +65,7 @@
         const img = new Image();
         img.onload = () => {
           sourceImage = img;
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
+          applyBtn.click();
         };
         img.src = e.target.result;
       };
@@ -64,28 +74,27 @@
 
     applyBtn.addEventListener('click', () => {
       if (!sourceImage) return;
-      canvas.width = sourceImage.width;
-      canvas.height = sourceImage.height;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(sourceImage, 0, 0);
-      const text = watermarkText.value.trim() || 'Hrvatski Kanal';
-      ctx.save();
-      ctx.font = '700 ' + Math.max(26, Math.min(80, sourceImage.width / 10)) + 'px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.globalAlpha = 0.45;
-      ctx.fillStyle = '#ffffff';
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 3;
-      ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
-      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-      ctx.restore();
+      const borderSize = Number(frameSize.value);
+      const borderColor = frameColor.value;
+      const output = document.createElement('canvas');
+      output.width = sourceImage.width + borderSize * 2;
+      output.height = sourceImage.height + borderSize * 2;
+      const octx = output.getContext('2d');
+      octx.fillStyle = borderColor;
+      octx.fillRect(0, 0, output.width, output.height);
+      octx.shadowColor = 'rgba(0,0,0,0.35)';
+      octx.shadowBlur = 28;
+      octx.drawImage(sourceImage, borderSize, borderSize, sourceImage.width, sourceImage.height);
+      octx.shadowBlur = 0;
+      canvas.width = output.width;
+      canvas.height = output.height;
+      ctx.drawImage(output, 0, 0);
       downloadBtn.disabled = false;
     });
 
     downloadBtn.addEventListener('click', () => {
       const a = document.createElement('a');
-      a.download = 'vodeni-zig.png';
+      a.download = 'okvir-i-sjena.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
     });

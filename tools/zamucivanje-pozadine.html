@@ -1,4 +1,108 @@
 <!DOCTYPE html>
-<html lang="hr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Zamućivanje pozadine</title><link rel="stylesheet" href="../styles.css"><style>.canvas-wrap{display:flex;justify-content:center;overflow:auto;margin-top:18px}.canvas-wrap canvas{max-width:100%;border-radius:14px}</style></head>
-<body><div class="tool-page"><div class="tool-topbar"><a href="../index.html">← Natrag</a><span>Zamućivanje pozadine</span></div><div class="tool-body"><h1>Zamućivanje pozadine</h1><p>Stvori efekt zamućene pozadine i zadrži središnji dio slike oštrim. Sve se obrađuje lokalno.</p><div class="tool-box"><label class="btn btn-primary" style="display:inline-flex;width:max-content;cursor:pointer"><input id="fileInput" type="file" accept="image/*">Učitaj sliku</label><div class="row"><label for="blurAmount">Zamućenje: <output id="blurValue">14</output> px</label><input id="blurAmount" type="range" min="2" max="30" value="14"></div><div class="row"><label for="focusSize">Veličina fokusa: <output id="focusValue">68</output>%</label><input id="focusSize" type="range" min="35" max="90" value="68"></div><div class="row"><button id="applyBtn" class="btn btn-primary" type="button">Primijeni</button><button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button></div></div><div class="canvas-wrap"><canvas id="canvas"></canvas></div></div></div>
-<script>const fileInput=document.getElementById('fileInput'),blurAmount=document.getElementById('blurAmount'),focusSize=document.getElementById('focusSize'),blurValue=document.getElementById('blurValue'),focusValue=document.getElementById('focusValue'),applyBtn=document.getElementById('applyBtn'),downloadBtn=document.getElementById('downloadBtn'),canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');let image=null;function updateLabels(){blurValue.value=blurAmount.value;focusValue.value=focusSize.value}blurAmount.oninput=focusSize.oninput=updateLabels;fileInput.onchange=e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{image=new Image();image.onload=()=>{canvas.width=image.width;canvas.height=image.height;ctx.drawImage(image,0,0)};image.src=ev.target.result};reader.readAsDataURL(file)};applyBtn.onclick=()=>{if(!image)return;const blurCanvas=document.createElement('canvas');blurCanvas.width=canvas.width;blurCanvas.height=canvas.height;const bctx=blurCanvas.getContext('2d');bctx.filter='blur('+blurAmount.value+'px)';bctx.drawImage(image,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(blurCanvas,0,0);const w=canvas.width*Number(focusSize.value)/100,h=canvas.height*Number(focusSize.value)/100;ctx.save();ctx.beginPath();ctx.ellipse(canvas.width/2,canvas.height/2,w/2,h/2,0,0,Math.PI*2);ctx.clip();ctx.drawImage(image,0,0);ctx.restore();downloadBtn.disabled=false};downloadBtn.onclick=()=>{const a=document.createElement('a');a.download='zamutena-pozadina.png';a.href=canvas.toDataURL('image/png');a.click()};updateLabels()</script></body></html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vodeni žig</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="tool-page">
+    <div class="tool-topbar">
+      <a href="../index.html">← Natrag</a>
+      <span>Vodeni žig</span>
+    </div>
+    <div class="tool-body">
+      <h1>Vodeni žig</h1>
+      <p>Dodaj tekst kao vodeni žig na sredinu slike.</p>
+
+      <div class="tool-box">
+        <label class="btn btn-primary" style="display:inline-flex; width:max-content; cursor:pointer;">
+          <input id="fileInput" type="file" accept="image/*" />
+          Učitaj sliku
+        </label>
+        <div class="row">
+          <input id="watermarkText" type="text" value="Hrvatski Kanal" placeholder="Tekst vodenog žiga" />
+        </div>
+        <div class="row">
+          <label>Prozirnost:</label>
+          <div style="width:100%; display:flex; gap:10px; align-items:center;">
+            <input id="opacityInput" type="range" min="0.1" max="1" step="0.1" value="0.45" style="flex:1;" />
+            <span id="opacityValue" style="min-width:40px; font-weight:600;">45%</span>
+          </div>
+        </div>
+        <div class="row">
+          <button id="applyBtn" class="btn btn-primary" type="button">Dodaj žig</button>
+          <button id="downloadBtn" class="btn btn-success" type="button" disabled>Preuzmi</button>
+        </div>
+      </div>
+
+      <div class="tool-box" style="margin-top:16px; display:flex; justify-content:center; overflow-x:auto;">
+        <canvas id="canvas" width="700" height="500" style="border-radius:12px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const watermarkText = document.getElementById('watermarkText');
+    const opacityInput = document.getElementById('opacityInput');
+    const opacityValue = document.getElementById('opacityValue');
+    const applyBtn = document.getElementById('applyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let sourceImage = null;
+
+    opacityInput.addEventListener('input', () => {
+      opacityValue.textContent = Math.round(opacityInput.value * 100) + '%';
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          sourceImage = img;
+          canvas.width = Math.min(img.width, 700);
+          canvas.height = Math.min(img.height, 500) * (canvas.width / img.width);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          applyBtn.disabled = false;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    applyBtn.addEventListener('click', () => {
+      if (!sourceImage) return;
+      const text = watermarkText.value.trim() || 'Hrvatski Kanal';
+      const opacity = Number(opacityInput.value);
+      canvas.width = Math.min(sourceImage.width, 700);
+      canvas.height = Math.min(sourceImage.height, 500) * (canvas.width / sourceImage.width);
+      ctx.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.font = '700 ' + Math.max(26, Math.min(80, canvas.width / 10)) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.globalAlpha = opacity;
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 3;
+      ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      ctx.restore();
+      downloadBtn.disabled = false;
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.download = 'vodeni-zig.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  </script>
+</body>
+</html>
