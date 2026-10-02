@@ -31,3 +31,7 @@ python3 -m http.server 8000
 QR, PDF i transkriptor koriste besplatne CDN biblioteke samo u browseru. Transkriptor pri prvom korištenju preuzima besplatni Whisper model u cache; audio se obrađuje lokalno i ne šalje se na naš server. Za mikrofon je potreban browser s Web Speech API podrškom.
 
 Hrvatski Kanal AI je odvojen od ovog statičkog Studio sučelja. Stranica alata koristi opcionalni Studio bridge (`window.HK_AGENT_ENDPOINT` ili `/api/hk-agent`); privatni hub, pravila i memorija ne kopiraju se u javni frontend.
+
+## Licenca
+
+Svi alati navedeni u ovom repozitoriju, njihov izvorni kod, skripte i prateća dokumentacija obuhvaćeni su vlasničkom nekomercijalnom licencom Hrvatskog Kanala iz datoteke [`LICENSE`](./LICENSE). Neovlašteno umnožavanje, redistribucija, komercijalno iskorištavanje i izrada izvedenih komercijalnih radova nisu dopušteni bez pisanog odobrenja nositelja autorskih prava.
