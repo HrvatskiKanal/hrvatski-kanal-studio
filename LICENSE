@@ -1,0 +1,19 @@
+VLASNIČKA NEKOMERCIJALNA LICENCA I UVJETI KORIŠTENJA
+Copyright (c) 2026 Hrvatski Kanal (https://github.com/Hrvatski-Kanal). Sva prava pridržana. / All rights reserved.
+
+ČLANAK 1. VLASNIŠTVO I NEKOMERCIJALNA NAMJENA
+Cjelokupni izvorni kod, softverski moduli, skripte za obradu podataka, aplikativni alati, sustavi automatizacije i prateća dokumentacija sadržana u ovom repozitoriju isključivo su vlasništvo projekta Hrvatski Kanal. Softver je razvijen namjenski i nekomercijalno za potrebe rada, optimizacije i funkcionalnosti web platforme hrvatskikanal.com. Softver nije namijenjen za komercijalnu prodaju, iznajmljivanje, licenciranje ili ostvarivanje bilo kakve izravne ili neizravne financijske dobiti.
+
+ČLANAK 2. INTERNI RAD I TEHNIČKA UPRAVA
+Nositelj autorskih prava, ovlašteni članovi tima te integrirani interni softverski procesi i automatizirane skripte imaju neograničeno pravo pristupa, izvršavanja, izmjene, nadogradnje i testiranja koda. Eventualne tehničke pogreške, prekidi u radu ili nepravilnosti u izvršavanju softverskih skripti rješavaju se isključivo unutar interne strukture projekta i ne mogu biti predmetom nikakve pravne ili materijalne odgovornosti.
+
+ČLANAK 3. PRAVO NA JEDNOSTRANE IZMJENE I UKIDANJE
+Hrvatski Kanal zadržava apsolutno i jednostrano pravo da u bilo kojem trenutku, bez prethodne najave, obrazloženja ili obveze prema trećim stranama, izvrši izmjene koda, obustavi rad alata, izmijeni funkcionalnosti ili u potpunosti obriše bilo koji dio softvera ili repozitorija.
+
+ČLANAK 4. OGRANIČENJE ZA TREĆE STRANE
+Zabranjeno je svako neovlašteno umnožavanje, re-distribucija, preuzimanje radi komercijalnog iskorištavanja, prodaja, iznajmljivanje ili izrada izvedenih komercijalnih radova na temelju ovog koda bez izričitog pismenog odobrenja nositelja autorskih prava.
+
+ČLANAK 5. ISKLJUČENJE JAMSTVA I OGRANIČENJE ODGOVORNOSTI ("AS IS")
+Ovaj softver ustupa se na uvid i korištenje u stanju "KAKAV JEST" ("AS IS") i "PREMA DOSTUPNOSTI" ("AS AVAILABLE"), bez ikakvih izričitih ili impliciranih jamstava, uključujući, ali ne ograničavajući se na jamstva funkcionalnosti, prikladnosti za određenu namjenu ili neporicanja prava.
+
+Svako preuzimanje, pokretanje ili oslanjanje na ovaj softver od strane neovlaštenih trećih osoba vrši se na vlastitu odgovornost. Hrvatski Kanal ni pod kojim uvjetima ne odgovara za izravnu, neizravnu, slučajnu, posebnu ili posljedičnu štetu (uključujući gubitak podataka, prekid rada ili pad sustava) nastalu korištenjem ili nemogućnošću korištenja ovog softvera.
