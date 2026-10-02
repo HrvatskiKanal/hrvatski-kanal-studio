@@ -2,6 +2,8 @@
 
 Besplatni lokalni web alati za obradu slika, teksta, PDF-a, preuzimanja i transkripciju govora. Datoteke se obrađuju u browseru; nema našeg backend poslužitelja ni plaćenih API-ja.
 
+Ovi alati namijenjeni su našoj stanici i našoj zajednici. Više alata i sadržaja dostupno je na [hrvatskikanal.com/alati](https://hrvatskikanal.com/alati).
+
 ## Alati (15)
 
 1. **Hrvatski Kanal AI** — hrvatski istraživački alat
