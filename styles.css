@@ -206,6 +206,7 @@ body {
 }
 
 .tool-card {
+  position: relative;
   display: block;
   padding: 20px 18px;
   text-decoration: none;
@@ -216,6 +217,23 @@ body {
 .tool-card:hover {
   transform: translateY(-2px);
   border-color: rgba(96, 165, 250, 0.5);
+}
+
+.tool-number {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #dbeafe;
+  background: rgba(96, 165, 250, 0.16);
+  border: 1px solid rgba(147, 197, 253, 0.25);
+  font-size: 0.78rem;
+  font-weight: 800;
 }
 
 .tool-icon {
@@ -230,14 +248,32 @@ body {
 }
 
 .tool-name {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
   font-size: 1.1rem;
   font-weight: 800;
   margin-bottom: 6px;
 }
 
+.tool-name:hover,
+.tool-open:hover {
+  color: #bfdbfe;
+  text-decoration: underline;
+}
+
 .tool-desc {
   color: var(--muted);
   line-height: 1.5;
+}
+
+.tool-open {
+  display: inline-block;
+  margin-top: 12px;
+  color: #93c5fd;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .tool-page {

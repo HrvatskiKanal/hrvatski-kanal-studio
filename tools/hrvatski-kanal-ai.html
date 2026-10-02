@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hrvatski Kanal AI — Hrvatski Kanal Studio</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .agent-preview { display: none; max-width: 100%; max-height: 260px; margin-top: 12px; border-radius: 12px; }
+    .agent-file { display: grid; gap: 8px; }
+    .agent-result { white-space: pre-wrap; padding: 16px; border-radius: 12px; min-height: 100px; }
+  </style>
+</head>
+<body>
+  <div class="tool-page">
+    <div class="tool-topbar">
+      <a href="../index.html">← Natrag</a>
+      <span>Hrvatski Kanal AI</span>
+    </div>
+    <div class="tool-body">
+      <h1>Hrvatski Kanal AI</h1>
+      <p>Neovisni hrvatski agent koji prepoznaje zadatak i poziva samo naše registrirane Studio alate.</p>
+
+      <div class="tool-box">
+        <label class="label" for="message">Pitanje ili zadatak</label>
+        <textarea id="message" placeholder="Npr. konvertiraj sliku u WebP, napravi QR kod ili optimiziraj ovu sliku..."></textarea>
+
+        <label class="agent-file label" for="fileInput">
+          Datoteka za Hrvatski Kanal AI (opcionalno)
+          <input id="fileInput" type="file" accept="image/*" multiple />
+        </label>
+        <img id="preview" class="agent-preview" alt="Pregled datoteke za Hrvatski Kanal AI" />
+
+        <div class="row">
+          <button id="askBtn" class="btn btn-primary" type="button">Neka Hrvatski Kanal AI odabere alat</button>
+        </div>
+        <p id="status" class="label" role="status">Spremno. Slike ostaju u ovom pregledniku.</p>
+        <pre id="answer" class="panel agent-result">Hrvatski Kanal AI će prepoznati zadatak i pozvati odgovarajući naš alat.</pre>
+        <a id="downloadBtn" class="btn btn-success" download="hk-ai-rezultat.png" style="display:none; width:max-content; margin-top:12px;">Preuzmi rezultat</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../vendor/qrcode.min.js"></script>
+  <script src="../vendor/jspdf.umd.min.js"></script>
+  <script src="./hrvatski-kanal-ai-agent.js"></script>
+</body>
+</html>

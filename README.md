@@ -20,22 +20,25 @@ Novi lokalni alat pripada ovdje, u `tools/`. Alati kojima stvarno treba posluži
 
 Studio uključuje mali **HK Agent** u donjem desnom kutu. To je besplatni browser-lokalni pomoćnik i tražilica: prepoznaje pitanja o alatima, rubrikama, Katoličkom kalendaru, Povijesti Hrvata, Domovinskom ratu, Vijestima, Politici, Medijima, Geopolitici, Vremenu, Ekonomiji, Kontaktima i podršci te vodi korisnika na odgovarajuću stranicu. Nema prijave, praćenja ni limita pitanja. Ne koristi AI API, ne šalje razgovor na server i namjerno nije povezan s video downloaderom. Ako se kasnije doda pravi lokalni model, mora ostati opcionalan, vidljivo označen i bez automatskog troška.
 
-## Alati (14)
+## Alati (15)
 
-1. **Brisanje pozadine** — uklanjanje jednobojne pozadine
-2. **Konverter slika** — PNG, JPG i WebP
-3. **Brojač teksta** — riječi, znakovi i rečenice
-4. **Čitač teksta** — tekst u govor preko browsera
-5. **Paleta boja** — dominantne boje iz slike
-6. **QR kod generator** — QR kod za tekst ili poveznicu
-7. **Optimizacija slika** — promjena dimenzija, formata i kvalitete
-8. **Slike u PDF** — više slika u jedan PDF
+1. **Hrvatski Kanal AI** — hrvatski istraživački alat
+2. **Downloader** — izravni URL, tekst ili Base64 u datoteku
+3. **Vodeni žig** — tekstualni žig na slici
+4. **Paleta boja** — dominantne boje iz slike
+5. **Slike u PDF** — više slika u jedan PDF
+6. **Čitač teksta** — tekst u govor preko browsera
+7. **Brojač teksta** — riječi, znakovi i rečenice
+8. **Okvir i sjena** — okvir i sjena na fotografiji
 9. **Spajanje slika** — kolaž od 2–4 slike u zadanom redoslijedu
-10. **Okvir i sjena** — okvir i sjena na fotografiji
-11. **Vodeni žig** — tekstualni žig na slici
+10. **Konverter slika** — PNG, JPG i WebP
+11. **Brisanje pozadine** — uklanjanje jednobojne pozadine
 12. **Zamućivanje slike** — efekt zamućenja na cijeloj slici
-13. **Downloader** — izravni URL, tekst ili Base64 u datoteku
-14. **Transkriptor audio i videa** — lokalni Whisper za datoteke i Web Speech API za mikrofon
+13. **QR kod generator** — QR kod za tekst ili poveznicu
+14. **Optimizacija slika** — promjena dimenzija, formata i kvalitete
+15. **Transkriptor audio i videa** — lokalni Whisper za datoteke i Web Speech API za mikrofon
+
+Popis obuhvaća svih 15 alata u repozitoriju; detalji o registru i provjerama nalaze se u `TOOL_REGISTRY.json` i `scripts/check-static.mjs`.
 
 ## Downloader: stvarna ograničenja
 
@@ -76,7 +79,7 @@ Za repozitorij je dodana provjera koja koristi samo ugrađeni Node.js, bez `npm 
 npm test
 ```
 
-Provjera potvrđuje da svih 14 alatnih stranica postoji i da je registrirano u `app.js`, da lokalne CSS/JS/WASM ovisnosti postoje te da se svaki inline JavaScript blok može sintaksno parsirati. Tako se kvarovi hvataju prije objave na GitHub Pages.
+Provjera potvrđuje da alatne stranice postoje i da su registrirane u `app.js`, da lokalne CSS/JS/WASM ovisnosti postoje te da se svaki inline JavaScript blok može sintaksno parsirati. Tako se kvarovi hvataju prije objave na GitHub Pages.
 
 ## Besplatno objavljivanje na GitHub Pages
 
@@ -88,3 +91,11 @@ Projekt je obična statička stranica i ne treba build, server, bazu, tajne vari
 4. Nemoj uključivati plaćene add-one, Actions deployment niti vanjske servere samo za ovaj projekt.
 
 Za javni repozitorij GitHub Pages je najjednostavniji način hostanja bez aplikacijskog backenda. I dalje vrijede GitHubova pravila i ograničenja usluge; studio sam ne stvara potrošnju API-ja ili poslužitelja.
+
+QR, PDF i transkriptor koriste lokalno spremljene, pinane browser biblioteke. Transkriptor pri prvom korištenju preuzima besplatni Whisper model u cache; audio se obrađuje lokalno i ne šalje se na naš server. Za mikrofon je potreban browser s Web Speech API podrškom.
+
+Hrvatski Kanal AI je odvojen od ovog statičkog Studio sučelja. Stranica alata koristi opcionalni Studio bridge (`window.HK_AGENT_ENDPOINT` ili `/api/hk-agent`); privatni hub, pravila i memorija ne kopiraju se u javni frontend.
+
+## Licenca
+
+Svi alati navedeni u ovom repozitoriju, njihov izvorni kod, skripte i prateća dokumentacija obuhvaćeni su vlasničkom nekomercijalnom licencom Hrvatskog Kanala iz datoteke [`LICENSE`](./LICENSE). Neovlašteno umnožavanje, redistribucija, komercijalno iskorištavanje i izrada izvedenih komercijalnih radova nisu dopušteni bez pisanog odobrenja nositelja autorskih prava.
