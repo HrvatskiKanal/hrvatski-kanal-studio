@@ -83,6 +83,13 @@ body {
   background: rgba(148, 163, 184, 0.04);
 }
 
+.top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .hero {
   display: grid;
   grid-template-columns: 1.3fr 0.7fr;
