@@ -63,7 +63,7 @@ try {
   const tools = readdirSync(toolsDirectory)
     .filter(name => name.endsWith('.html'))
     .sort();
-  assert(tools.length === 14, `Expected 14 tool pages, found ${tools.length}.`);
+  assert(tools.length === 15, `Expected 15 tool pages, found ${tools.length}.`);
 
   const app = readFileSync(join(root, 'app.js'), 'utf8');
   const registeredTools = [...app.matchAll(/href:\s*'tools\/([^']+\.html)'/g)].map(match => match[1]).sort();

@@ -83,6 +83,7 @@
     }
   ],
   "tools": [
+    { "id": "hrvatski-kanal-ai", "name": "Hrvatski Kanal AI", "path": "tools/hrvatski-kanal-ai.html", "kind": "browser-local-agent" },
     { "id": "brisanje-pozadine", "name": "Brisanje pozadine", "path": "tools/brisanje-pozadine.html", "kind": "local-browser" },
     { "id": "konverter-slika", "name": "Konverter slika", "path": "tools/konverter-slika.html", "kind": "local-browser" },
     { "id": "brojac-teksta", "name": "Brojač teksta", "path": "tools/brojac-teksta.html", "kind": "local-browser" },
