@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Otvoreni AI agenti | Hrvatski Kanal Studio</title>
+  <meta name="description" content="Hrvatski vodič kroz otvorene AI agente, alate za upravljanje računalom, MCP projekte i CUA SDK-ove. Istraži projekte otvorenog koda na jednom mjestu." />
+  <meta name="robots" content="index,follow" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="alternatives.css" />
+</head>
+<body>
+  <div class="page-shell alternatives-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <a class="brand-badge" href="index.html" aria-label="Hrvatski Kanal Studio početna">HK</a>
+        <div>
+          <div class="brand-name">Hrvatski Kanal Studio</div>
+          <div class="brand-subtitle">Otvoreni projekti i lokalni alati</div>
+        </div>
+      </div>
+      <nav class="top-nav" aria-label="Glavna navigacija">
+        <a class="header-link" href="index.html">Moji alati</a>
+        <a class="header-link active" href="alternatives.html">Otvoreni agenti</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="alternatives-hero" aria-labelledby="page-title">
+        <div class="hero-kicker">Vodič na hrvatskom jeziku</div>
+        <h1 id="page-title">Otvoreni AI agenti</h1>
+        <p class="hero-intro">Istraži otvorene projekte za AI asistente, korištenje računala, MCP povezivanje i razvoj vlastitih agenata. Ovo je urednički izbor za lakše pronalaženje zanimljivih GitHub projekata na jednom mjestu.</p>
+        <div class="hero-meta">
+          <span><strong id="projectCount">26</strong> projekata</span>
+          <span>otvoreni kod</span>
+          <span>hrvatski vodič</span>
+        </div>
+      </section>
+
+      <section class="directory" aria-labelledby="directory-title">
+        <div class="directory-toolbar">
+          <div>
+            <p class="eyebrow">Istraži po potrebi</p>
+            <h2 id="directory-title">Pronađi pravi projekt</h2>
+          </div>
+          <label class="search-box">
+            <span class="sr-only">Pretraži projekte</span>
+            <input id="projectSearch" type="search" placeholder="Pretraži agente, alate ili tehnologije…" autocomplete="off" />
+          </label>
+        </div>
+        <div class="filter-row" role="group" aria-label="Filtriranje po kategoriji">
+          <button class="filter-chip is-active" type="button" data-filter="all">Sve <span>26</span></button>
+          <button class="filter-chip" type="button" data-filter="agenti">AI agenti <span>11</span></button>
+          <button class="filter-chip" type="button" data-filter="racunalo">Upravljanje računalom <span>10</span></button>
+          <button class="filter-chip" type="button" data-filter="mcp">MCP <span>1</span></button>
+          <button class="filter-chip" type="button" data-filter="sdk">CUA SDK <span>4</span></button>
+        </div>
+        <p id="emptyState" class="empty-state" hidden>Nema rezultata. Pokušaj s drugim pojmom ili odaberi kategoriju „Sve”.</p>
+
+        <div id="projectGrid" class="project-grid">
+          <article class="project-card" data-category="agenti" data-search="suna ai agent radni prostor">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">01</span></div>
+            <h3>Suna</h3><p>Otvoreni AI agent za istraživanje, planiranje i izvršavanje zadataka.</p><a href="https://github.com/kortix-ai/suna" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="gptme terminal agent naredbeni redak">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">02</span></div>
+            <h3>gptme</h3><p>Agent iz naredbenog retka za rad s datotekama, kodom i alatima.</p><a href="https://github.com/gptme/gptme" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="terminator agent workflow mreža">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">03</span></div>
+            <h3>Terminator</h3><p>Eksperimentalni okvir za izgradnju i povezivanje AI agenata.</p><a href="https://github.com/iris-networks/terminator" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="openmanus manus agent automatizacija">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">04</span></div>
+            <h3>OpenManus</h3><p>Otvoreni okvir za eksperimentiranje s općim AI agentima.</p><a href="https://github.com/FoundationAgents/OpenManus" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="agenticseek lokalni agent istraživanje">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">05</span></div>
+            <h3>AgenticSeek</h3><p>Projekt usmjeren na samostalno istraživanje i izvršavanje zadataka.</p><a href="https://github.com/Fosowl/agenticSeek" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="codel kodiranje agent developer">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">06</span></div>
+            <h3>Codel</h3><p>AI razvojni pomoćnik za rad s projektima i programskim kodom.</p><a href="https://github.com/semanser/codel" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="opus agent istraživanje">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">07</span></div>
+            <h3>Opus</h3><p>Otvoreni eksperiment za organizaciju višekoračnih zadataka s agentom.</p><a href="https://github.com/jeffrey-zang/opus" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="arrakis agent autonomija">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">08</span></div>
+            <h3>Arrakis</h3><p>Projekt za razvoj i orkestraciju zadataka vođenih AI agentom.</p><a href="https://github.com/abshkbh/arrakis" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="planar computer use agent preglednik">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">09</span></div>
+            <h3>Planar Computer Use</h3><p>Eksperiment s agentima koji razumiju zadatke na računalu.</p><a href="https://github.com/coplane/planar-computer-use" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="langmanus jezik agent planiranje">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">10</span></div>
+            <h3>LangManus</h3><p>Okvir za jezične agente koji planiraju i izvršavaju složenije zadatke.</p><a href="https://github.com/Darwin-lfl/langmanus" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="agenti" data-search="kwa iagents kwai agenti istraživanje">
+            <div class="card-top"><span class="category-label">AI agenti</span><span class="card-index">11</span></div>
+            <h3>KwaiAgents</h3><p>Zbirka istraživačkih komponenti za izgradnju sposobnijih agenata.</p><a href="https://github.com/KwaiKEG/KwaiAgents" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+
+          <article class="project-card" data-category="racunalo" data-search="bytebot računalo computer use desktop">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">12</span></div>
+            <h3>Bytebot</h3><p>Agent koji istražuje kako AI može raditi s grafičkim sučeljem računala.</p><a href="https://github.com/bytebot-ai/bytebot" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="magentic ui microsoft korisničko sučelje">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">13</span></div>
+            <h3>Magentic UI</h3><p>Istraživačko sučelje za suradnju čovjeka i računalnog agenta.</p><a href="https://github.com/microsoft/magentic-ui" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="sofia computer use računalni agent">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">14</span></div>
+            <h3>SOFIA</h3><p>Otvoreni projekt za izvršavanje zadataka kroz računalno sučelje.</p><a href="https://github.com/akim42003/SOFIA" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="agentic ai computer računalo agent">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">15</span></div>
+            <h3>Agentic AI Computer</h3><p>Eksperiment s agentom koji može razumjeti i pokretati računalne radnje.</p><a href="https://github.com/masfaatanveer/Agentic-AI-Computer" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="spongecake computer agent">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">16</span></div>
+            <h3>Spongecake</h3><p>Otvoreni eksperiment za računalne agente i automatizaciju zadataka.</p><a href="https://github.com/aditya-nadkarni/spongecake" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="cuse computer use agent">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">17</span></div>
+            <h3>Cuse</h3><p>Alat za istraživanje agenata koji koriste računalno sučelje.</p><a href="https://github.com/cuse-dev/cuse" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="llama4 computer use llama računalni agent">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">18</span></div>
+            <h3>Llama4 Computer Use</h3><p>Primjer računalnog agenta koji istražuje korištenje Llama modela.</p><a href="https://github.com/TheoLeeCJ/llama4-computer-use" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="computer agent desktop računalni agent">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">19</span></div>
+            <h3>Computer Agent</h3><p>Jednostavan projekt za povezivanje jezičnog modela s radnjama na računalu.</p><a href="https://github.com/suitedaces/computer-agent" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="computer use nodejs javascript demo">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">20</span></div>
+            <h3>Computer Use Node.js Demo</h3><p>Demo implementacija računalnog agenta u Node.js okruženju.</p><a href="https://github.com/lx-0/computer-use-nodejs-demo" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="racunalo" data-search="gpt agent iris networks computer">
+            <div class="card-top"><span class="category-label">Upravljanje računalom</span><span class="card-index">21</span></div>
+            <h3>GPT Agent</h3><p>Eksperiment s GPT agentom za izvršavanje zadataka uz alate.</p><a href="https://github.com/iris-networks/gpt-agent" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+
+          <article class="project-card" data-category="mcp" data-search="edgebox mcp alati povezivanje">
+            <div class="card-top"><span class="category-label">MCP</span><span class="card-index">22</span></div>
+            <h3>EdgeBox</h3><p>Projekt za povezivanje agenata s alatima i vanjskim mogućnostima kroz MCP.</p><a href="https://github.com/BIGPPWONG/EdgeBox" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+
+          <article class="project-card" data-category="sdk" data-search="owl camel ai cua sdk agent">
+            <div class="card-top"><span class="category-label">CUA SDK</span><span class="card-index">23</span></div>
+            <h3>OWL</h3><p>Razvojni okvir za izgradnju agenata koji koriste računalne alate.</p><a href="https://github.com/camel-ai/owl" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="sdk" data-search="vercel ai sdk computer use razvojni okvir">
+            <div class="card-top"><span class="category-label">CUA SDK</span><span class="card-index">24</span></div>
+            <h3>AI SDK Computer Use</h3><p>Primjer povezivanja AI SDK-a s mogućnostima upravljanja računalom.</p><a href="https://github.com/vercel-labs/ai-sdk-computer-use" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="sdk" data-search="e2b open computer use sdk sandbox">
+            <div class="card-top"><span class="category-label">CUA SDK</span><span class="card-index">25</span></div>
+            <h3>E2B Open Computer Use</h3><p>Otvoreni primjer za sigurnije pokretanje računalnih radnji u sandboxu.</p><a href="https://github.com/e2b-dev/open-computer-use" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+          <article class="project-card" data-category="sdk" data-search="openai cua sample app computer use">
+            <div class="card-top"><span class="category-label">CUA SDK</span><span class="card-index">26</span></div>
+            <h3>OpenAI CUA Sample App</h3><p>Referentni primjer aplikacije za istraživanje računalne upotrebe.</p><a href="https://github.com/openai/openai-cua-sample-app" target="_blank" rel="noopener noreferrer">Otvori GitHub <span>↗</span></a>
+          </article>
+        </div>
+      </section>
+
+      <aside class="editor-note">
+        <strong>Napomena prije korištenja</strong>
+        <p>Ovo je urednički izbor i nije službena preporuka ni jamstvo kvalitete. Prije instalacije provjeri aktivnost projekta, sigurnosne zahtjeve, licencu, ovisnosti i troškove modela ili hostinga. Popis je izvorno nadahnut javnim popisom <a href="https://github.com/rodrigoandrigo/open-source-alternatives-to-manus-ai" target="_blank" rel="noopener noreferrer">Open Source Alternatives to Manus AI</a>, ali tekst, prijevodi i organizacija ove stranice originalni su za Hrvatski Kanal Studio.</p>
+      </aside>
+    </main>
+  </div>
+  <script src="alternatives.js"></script>
+</body>
+</html>
