@@ -1,0 +1,50 @@
+name: Studio static checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "app.js"
+      - "styles.css"
+      - "tools/**"
+      - "vendor/**"
+      - "scripts/**"
+      - ".github/workflows/studio-static-checks.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "app.js"
+      - "styles.css"
+      - "tools/**"
+      - "vendor/**"
+      - "scripts/**"
+      - ".github/workflows/studio-static-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-static-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-static-site:
+    name: Check local assets and JavaScript syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check local HTML, CSS, and tool links
+        run: python3 scripts/check-static-assets.py
+
+      - name: Check first-party JavaScript syntax
+        run: |
+          node --check app.js
+          node --check tools/hrvatski-kanal-ai-agent.js
