@@ -10,7 +10,8 @@ on:
       - "tools/**"
       - "vendor/**"
       - "scripts/**"
-      - ".github/workflows/studio-static-checks.yml"
+      - ".github/workflows/**"
+      - ".github/dependabot.yml"
   pull_request:
     branches: [main]
     paths:
@@ -20,7 +21,8 @@ on:
       - "tools/**"
       - "vendor/**"
       - "scripts/**"
-      - ".github/workflows/studio-static-checks.yml"
+      - ".github/workflows/**"
+      - ".github/dependabot.yml"
   workflow_dispatch:
 
 permissions:
