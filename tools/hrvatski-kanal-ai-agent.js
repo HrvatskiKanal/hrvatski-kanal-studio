@@ -9,7 +9,13 @@ let selectedFiles = [];
 let selectedUrls = [];
 let outputUrl = '';
 
-fileInput.addEventListener('change', () => {
+const HAS_AGENT_UI = !!(document.getElementById('message') && document.getElementById('askBtn'));
+function safeSetStatus(text) { const el = document.getElementById('status'); if (el) el.textContent = text; }
+function safeSetAnswer(text) { const el = document.getElementById('answer'); if (el) el.textContent = text; }
+function safeCanvasContext(canvas) { try { return canvas?.getContext?.('2d') || null; } catch { return null; } }
+
+
+if (fileInput) fileInput.addEventListener('change', () => {
   selectedFiles = [...(fileInput.files || [])];
   selectedUrls.forEach((url) => URL.revokeObjectURL(url));
   selectedUrls = selectedFiles.map((file) => URL.createObjectURL(file));
@@ -48,7 +54,7 @@ function drawImage(image, maxWidth = 1800) {
   const canvas = document.createElement('canvas');
   canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
   canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+  const ctx = safeCanvasContext(canvas); if (ctx) ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
   return canvas;
 }
 function imageCanvas(image) { return drawImage(image); }
@@ -174,4 +180,4 @@ async function runAgentTool() {
   } catch (error) { status.textContent = error.message || 'Alat nije uspio završiti obradu.'; answer.textContent = 'Hrvatski Kanal AI nije poslao sliku niti ključ trećoj strani. Provjerite unos i pokušajte ponovno.'; }
   finally { askBtn.disabled = false; }
 }
-askBtn.addEventListener('click', runAgentTool);
+if (askBtn) askBtn.addEventListener('click', runAgentTool);

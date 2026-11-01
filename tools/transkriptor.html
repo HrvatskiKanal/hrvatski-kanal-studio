@@ -57,6 +57,12 @@
   <script type="module">
     import { createWhisperTranscriber } from '../vendor/studio-transcriber.js';
 
+    const HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
+    const HAS_MEDIARECORDER = !!window.MediaRecorder;
+    const HAS_SPEECH = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    function safeSetStatus(text) { const el = document.getElementById('status'); if (el) el.textContent = text; }
+    function safeCanvasContext(canvas) { try { return canvas?.getContext?.('2d') || null; } catch { return null; } }
+
     const fileInput = document.getElementById('fileInput');
     const fileName = document.getElementById('fileName');
     const transcribeBtn = document.getElementById('transcribeBtn');
@@ -78,7 +84,7 @@
       status.classList.toggle('error', isError);
     }
 
-    fileInput.addEventListener('change', () => {
+    if (fileInput) fileInput.addEventListener('change', () => {
       selectedFile = fileInput.files[0] || null;
       fileName.textContent = selectedFile ? `${selectedFile.name} (${(selectedFile.size / 1024 / 1024).toFixed(1)} MB)` : 'Nije odabrana datoteka.';
       transcribeBtn.disabled = !selectedFile;
