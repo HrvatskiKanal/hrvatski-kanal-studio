@@ -55,6 +55,8 @@
     </div>
   </div>
   <script type="module">
+    const HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
+    const HAS_MEDIARECORDER = !!window.MediaRecorder;
     import { createWhisperTranscriber } from '../vendor/studio-transcriber.js';
 
     const HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
