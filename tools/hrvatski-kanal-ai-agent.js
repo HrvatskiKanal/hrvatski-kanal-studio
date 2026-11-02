@@ -9,9 +9,6 @@ let selectedFiles = [];
 let selectedUrls = [];
 let outputUrl = '';
 
-const HAS_AGENT_UI = !!(document.getElementById('message') && document.getElementById('askBtn'));
-function safeSetStatus(text) { const el = document.getElementById('status'); if (el) el.textContent = text; }
-function safeSetAnswer(text) { const el = document.getElementById('answer'); if (el) el.textContent = text; }
 function safeCanvasContext(canvas) { try { return canvas?.getContext?.('2d') || null; } catch { return null; } }
 
 
