@@ -55,15 +55,7 @@
     </div>
   </div>
   <script type="module">
-    const HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
-    const HAS_MEDIARECORDER = !!window.MediaRecorder;
     import { createWhisperTranscriber } from '../vendor/studio-transcriber.js';
-
-    const HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
-    const HAS_MEDIARECORDER = !!window.MediaRecorder;
-    const HAS_SPEECH = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-    function safeSetStatus(text) { const el = document.getElementById('status'); if (el) el.textContent = text; }
-    function safeCanvasContext(canvas) { try { return canvas?.getContext?.('2d') || null; } catch { return null; } }
 
     const fileInput = document.getElementById('fileInput');
     const fileName = document.getElementById('fileName');
